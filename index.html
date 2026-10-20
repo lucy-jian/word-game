@@ -1,0 +1,1412 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>루시와 영어 단어 모험</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Jua&family=Gowun+Dodum&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg1:#fff0f6; --bg2:#f3e8ff; --bg3:#e3f3fe;
+  --card:#ffffff; --text:#4a3757; --muted:#8c7a9c; --border:#f1dcef;
+  --pink:#f06fa4; --pink-d:#cf4f86; --pink-soft:#ffe3ef;
+  --purple:#9b6ce8; --purple-d:#7a4fc9; --purple-soft:#efe5ff;
+  --sky:#4fa9e6; --sky-d:#3389c4; --sky-soft:#dff1fd;
+  --mint:#38b886; --mint-soft:#dcf6ea;
+  --sun:#f5b93a; --sun-soft:#fff3cf;
+  --oops:#f29a9a; --oops-soft:#ffe9e9;
+  --head:'Jua','Apple SD Gothic Neo','Malgun Gothic','Noto Sans KR',sans-serif;
+  --body:'Gowun Dodum','Apple SD Gothic Neo','Malgun Gothic','Noto Sans KR',sans-serif;
+  color-scheme: light;
+  box-sizing:border-box;
+  padding-top:env(safe-area-inset-top,0px);
+  padding-bottom:env(safe-area-inset-bottom,0px);
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --bg1:#2a2139; --bg2:#231c33; --bg3:#1c2536;
+    --card:#33294a; --text:#f7eeff; --muted:#c4b3d9; --border:#4b3d63;
+    --pink-soft:#55304a; --purple-soft:#41335e; --sky-soft:#29405a;
+    --mint-soft:#244538; --sun-soft:#4a3f22; --oops-soft:#4e2d33;
+    color-scheme: dark;
+  }
+}
+:root[data-theme="dark"]{
+  --bg1:#2a2139; --bg2:#231c33; --bg3:#1c2536;
+  --card:#33294a; --text:#f7eeff; --muted:#c4b3d9; --border:#4b3d63;
+  --pink-soft:#55304a; --purple-soft:#41335e; --sky-soft:#29405a;
+  --mint-soft:#244538; --sun-soft:#4a3f22; --oops-soft:#4e2d33;
+  color-scheme: dark;
+}
+/* 모험 장소별 배경 */
+body[data-place="forest"]{--bg1:#e9fbe8;--bg2:#f4fbe1;--bg3:#dff5ee}
+body[data-place="castle"]{--bg1:#eef2ff;--bg2:#f6ecff;--bg3:#fdf2fa}
+body[data-place="sea"]{--bg1:#e1f5ff;--bg2:#d8eefb;--bg3:#e4faf5}
+body[data-place="space"]{--bg1:#ebe7ff;--bg2:#e0e2fb;--bg3:#f4e9ff}
+body[data-place="candy"]{--bg1:#fff0f6;--bg2:#fff4e2;--bg3:#fde7f6}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]) body[data-place="forest"]{--bg1:#1c2a24;--bg2:#222b20;--bg3:#1b2830}
+  :root:not([data-theme="light"]) body[data-place="castle"]{--bg1:#232640;--bg2:#2a2140;--bg3:#30233a}
+  :root:not([data-theme="light"]) body[data-place="sea"]{--bg1:#17283a;--bg2:#16303a;--bg3:#1a2f33}
+  :root:not([data-theme="light"]) body[data-place="space"]{--bg1:#16142b;--bg2:#1d1b38;--bg3:#251a35}
+  :root:not([data-theme="light"]) body[data-place="candy"]{--bg1:#33212f;--bg2:#33281f;--bg3:#2f1f30}
+}
+*,*::before,*::after{box-sizing:border-box}
+html{scroll-padding-top:env(safe-area-inset-top,0px)}
+html,body{margin:0;min-height:100%}
+body{
+  font-family:var(--body); color:var(--text); font-size:17px; line-height:1.6;
+  background:linear-gradient(165deg,var(--bg1) 0%,var(--bg2) 50%,var(--bg3) 100%) fixed;
+  background-color:var(--bg1);
+  -webkit-tap-highlight-color:transparent;
+  transition:background-color .6s;
+}
+#app{max-width:680px;margin:0 auto;padding:16px 16px 48px;position:relative;z-index:1}
+#deco{position:fixed;inset:0;pointer-events:none;z-index:0;overflow:hidden}
+#deco span{position:absolute;bottom:-50px;opacity:.38;animation:drift linear infinite}
+@keyframes drift{from{transform:translateY(0) rotate(0)}to{transform:translateY(-118vh) rotate(220deg)}}
+h1,h2,h3{font-family:var(--head);font-weight:400;margin:0 0 10px;line-height:1.3}
+h3{font-size:1.3rem}
+p{margin:0 0 10px}
+.muted{color:var(--muted)}
+.small{font-size:.9rem}
+.center{text-align:center}
+button{font:inherit;color:inherit;cursor:pointer}
+button:focus-visible,input:focus-visible,textarea:focus-visible,label:focus-within{outline:3px solid var(--purple);outline-offset:2px}
+
+/* 버튼 */
+.btn{
+  font-family:var(--head); font-size:1.2rem; border:none; border-radius:999px;
+  padding:13px 24px; color:#fff; background:var(--pink); box-shadow:0 5px 0 var(--pink-d);
+  transition:transform .08s, box-shadow .08s; display:inline-flex; align-items:center; justify-content:center; gap:6px;
+}
+.btn:active{transform:translateY(4px);box-shadow:0 1px 0 var(--pink-d)}
+.btn.purple{background:var(--purple);box-shadow:0 5px 0 var(--purple-d)}
+.btn.purple:active{box-shadow:0 1px 0 var(--purple-d)}
+.btn.ghost{background:var(--card);color:var(--text);box-shadow:0 4px 0 var(--border);border:2px solid var(--border)}
+.btn.ghost:active{box-shadow:0 0 0 var(--border)}
+.btn.sm{font-size:1rem;padding:8px 16px}
+.btn.xl{font-size:1.5rem;padding:18px 28px;width:100%}
+.btn.full{width:100%}
+.btn:disabled{opacity:.5;cursor:default}
+
+/* 상단 */
+.topbar{display:flex;align-items:center;gap:8px;margin-bottom:14px;position:sticky;top:env(safe-area-inset-top,0px);z-index:5;padding:6px 0;background:var(--bg1)}
+body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset-top,0px);z-index:10;background:var(--bg1)}
+.icon-btn{border:2px solid var(--border);background:var(--card);border-radius:50%;width:46px;height:46px;font-size:1.3rem;flex:none}
+.pill{background:var(--card);border:2px solid var(--border);border-radius:999px;padding:6px 12px;font-family:var(--head);font-size:1.02rem;white-space:nowrap}
+.spacer{flex:1}
+
+/* 루시 */
+.lucy{display:flex;align-items:flex-end;gap:10px;margin:6px 0 16px}
+.lucy-ava{
+  flex:none;width:72px;height:72px;border-radius:50%;display:grid;place-items:center;font-size:2.6rem;
+  background:radial-gradient(circle at 35% 30%,#fff 0%,var(--purple-soft) 45%,var(--pink-soft) 100%);
+  border:3px solid var(--card); box-shadow:0 0 0 3px var(--purple-soft);
+  animation:float 3.2s ease-in-out infinite;
+}
+.lucy-ava.swap{animation:pop .35s ease, float 3.2s ease-in-out .35s infinite}
+.bubble{position:relative;background:var(--card);border:2px solid var(--border);border-radius:22px 22px 22px 6px;padding:12px 16px;font-size:1.08rem;flex:1;min-width:0}
+.bubble.pop{animation:pop .35s ease}
+@keyframes float{0%,100%{transform:translateY(0)}50%{transform:translateY(-6px)}}
+@keyframes pop{0%{transform:scale(.94)}60%{transform:scale(1.04)}100%{transform:scale(1)}}
+
+/* 카드 */
+.card{background:var(--card);border:2px solid var(--border);border-radius:24px;padding:18px;margin-bottom:16px}
+.progress{height:14px;border-radius:999px;background:var(--purple-soft);overflow:hidden;margin:10px 0 6px}
+.progress>div{height:100%;border-radius:999px;background:linear-gradient(90deg,var(--pink),var(--purple));transition:width .4s}
+
+/* 처음 화면 */
+.logo{font-size:2.3rem;text-align:center;margin:18px 0 6px;color:var(--purple)}
+.logo span{display:block;font-size:2.9rem;color:var(--pink);letter-spacing:-1px}
+.stat-row{display:flex;align-items:center;gap:16px}
+.big-star{font-family:var(--head);font-size:2.4rem;color:var(--sun)}
+.title-name{font-family:var(--head);font-size:1.35rem}
+.streak{margin-top:8px;font-family:var(--head);color:var(--pink)}
+.home-btns{display:grid;gap:14px}
+
+/* 탭, 입력 */
+.tabs{display:flex;gap:8px;margin-bottom:14px}
+.tab{flex:1;font-family:var(--head);font-size:1.15rem;padding:12px;border-radius:18px;border:2px solid var(--border);background:var(--card)}
+.tab.on{background:var(--purple);border-color:var(--purple);color:#fff}
+label,.label-like{display:block;font-family:var(--head);font-size:1.1rem;margin:10px 0 6px}
+.input,textarea{width:100%;font:inherit;font-size:1.1rem;padding:12px 14px;border-radius:16px;border:2px solid var(--border);background:var(--card);color:var(--text)}
+.input.big{font-size:1.45rem;padding:14px 16px}
+textarea{min-height:130px;resize:vertical;font-size:1rem}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:0 12px}
+.sel-emo{font-size:1.4rem;vertical-align:middle}
+.pk-tabs{display:flex;gap:6px;overflow-x:auto;padding:2px 2px 6px}
+.pk-tab{flex:none;border:2px solid var(--border);background:var(--card);border-radius:999px;padding:6px 12px;font-family:var(--head);font-size:.95rem}
+.pk-tab.on{background:var(--pink);border-color:var(--pink);color:#fff}
+.emoji-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(48px,1fr));gap:8px;margin:6px 0 14px}
+.emo{font-size:1.65rem;height:50px;border-radius:14px;border:2px solid var(--border);background:var(--card)}
+.emo.on{border-color:var(--pink);background:var(--pink-soft);transform:scale(1.06)}
+.photo-field{display:flex;align-items:center;gap:12px;flex-wrap:wrap;margin-bottom:16px}
+label.photo-btn{display:inline-flex;margin:0;cursor:pointer;font-size:1rem}
+.photo-prev{display:flex;align-items:center;gap:6px}
+.photo-prev img{width:64px;height:64px;object-fit:cover;border-radius:14px;border:2px solid var(--border)}
+.x-btn{border:none;background:var(--oops-soft);border-radius:50%;width:32px;height:32px}
+.row{display:flex;gap:10px;flex-wrap:wrap;align-items:center}
+.row.end{justify-content:flex-end}
+.row.between{justify-content:space-between}
+
+/* 단어 목록 */
+.wlist{list-style:none;margin:0;padding:0;display:grid;gap:8px}
+.wlist li{display:flex;align-items:center;gap:10px;padding:10px 12px;border-radius:16px;background:var(--bg1);border:2px solid var(--border);flex-wrap:wrap}
+.wlist .em{font-size:1.6rem;flex:none;width:40px;text-align:center}
+.thumb{width:40px;height:40px;object-fit:cover;border-radius:10px;display:block}
+.wlist .en{font-family:var(--head);font-size:1.2rem}
+.wlist .ko{color:var(--muted)}
+.wlist .grow{flex:1;min-width:120px}
+.li-btns{display:flex;gap:6px;margin-left:auto}
+.badge{display:inline-block;font-size:.8rem;padding:2px 10px;border-radius:999px;font-family:var(--head);white-space:nowrap}
+.badge.admin{background:var(--sky-soft)}
+.badge.child{background:var(--pink-soft)}
+.badge.bonus{background:var(--sun-soft)}
+.chips{display:flex;flex-wrap:wrap;gap:8px}
+.chip{background:var(--purple-soft);border-radius:999px;padding:4px 12px;font-family:var(--head)}
+.speak{border:none;background:var(--sky-soft);border-radius:50%;width:40px;height:40px;font-size:1.1rem;flex:none;vertical-align:middle}
+
+/* 그림 */
+img.pic{display:block;margin:0 auto 8px;object-fit:cover;border-radius:24px;width:160px;height:160px;border:4px solid var(--card);box-shadow:0 0 0 3px var(--purple-soft)}
+img.pic.sm{width:110px;height:110px;border-radius:18px}
+img.pic.mpic{width:52px;height:52px;border-radius:12px;border-width:2px;box-shadow:none;margin-bottom:2px}
+
+/* 단어 카드 */
+.wcard{text-align:center;padding:26px 18px}
+.wcard .emoji{font-size:5.5rem;line-height:1.1;display:block}
+.wcard .en{font-family:var(--head);font-size:3rem;color:var(--purple);margin:6px 0 0;word-break:break-word}
+.wcard .ko{font-family:var(--head);font-size:1.6rem;margin-bottom:14px}
+.example{background:var(--bg1);border-radius:18px;padding:12px 14px;font-size:1.15rem}
+.example b{color:var(--pink)}
+.dots{display:flex;justify-content:center;gap:8px;margin:4px 0 14px}
+.dots span{width:12px;height:12px;border-radius:50%;background:var(--purple-soft)}
+.dots span.on{background:var(--pink)}
+
+/* 게임 공통 */
+.game-head{display:flex;justify-content:space-between;align-items:center;gap:8px;flex-wrap:wrap}
+.tag{font-family:var(--head);background:var(--purple-soft);padding:4px 12px;border-radius:999px}
+.q-card{text-align:center;padding:24px 18px}
+.q-word{font-family:var(--head);font-size:2.8rem;color:var(--purple);display:flex;justify-content:center;align-items:center;gap:10px;flex-wrap:wrap;word-break:break-word}
+.q-word.ko{color:var(--text);font-size:2.1rem}
+.q-emoji{font-size:5.5rem;line-height:1.15;display:block}
+.q-emoji.sm{font-size:3.6rem}
+.q-sub{color:var(--muted);font-size:1.05rem;margin-top:6px}
+.q-sentence{font-family:var(--head);font-size:1.7rem;line-height:1.5}
+.blank{display:inline-block;min-width:90px;border-bottom:4px dashed var(--pink);color:var(--pink)}
+.big-speak{font-size:3.4rem;width:120px;height:120px;border-radius:50%;border:none;background:var(--sky-soft);box-shadow:0 6px 0 var(--sky)}
+.big-speak:active{transform:translateY(4px);box-shadow:0 2px 0 var(--sky)}
+.opts{display:grid;gap:12px;margin-top:4px}
+.opt{font-family:var(--head);font-size:1.5rem;padding:16px;border-radius:20px;border:3px solid var(--border);background:var(--card);box-shadow:0 4px 0 var(--border);transition:transform .08s}
+.opt:active{transform:translateY(3px)}
+.opt.right{background:var(--mint-soft);border-color:var(--mint);box-shadow:0 4px 0 var(--mint)}
+.opt.wrong{background:var(--oops-soft);border-color:var(--oops);opacity:.65;animation:shake .35s}
+.opt:disabled{cursor:default}
+@keyframes shake{0%,100%{transform:translateX(0)}25%{transform:translateX(-7px)}75%{transform:translateX(7px)}}
+.next-wrap{margin-top:16px;display:none}
+.next-wrap.show{display:block;animation:pop .3s}
+
+/* 철자 섞기, 빠진 글자 */
+.slots,.mword{display:flex;justify-content:center;gap:6px;flex-wrap:wrap;margin:18px 0}
+.slot{width:44px;height:56px;border-radius:12px;border:3px dashed var(--border);display:grid;place-items:center;font-family:var(--head);font-size:1.8rem;background:var(--bg1)}
+.slot.fill{border-style:solid;border-color:var(--purple)}
+.slot.lock{border-color:var(--sun);background:var(--sun-soft)}
+.slots.right .slot{border-color:var(--mint);background:var(--mint-soft)}
+.slots.reveal .slot{border-color:var(--sky);background:var(--sky-soft)}
+.slots.shake,.mword.shake{animation:shake .35s}
+.ml{font-family:var(--head);font-size:2.2rem;min-width:40px;height:58px;display:grid;place-items:center;color:var(--purple)}
+.ml.hole{border:3px dashed var(--pink);border-radius:12px;background:var(--bg1);color:var(--muted);padding:0 6px}
+.ml.hole.fill{border-style:solid;color:var(--text)}
+.ml.hole.lock{border-color:var(--sun);background:var(--sun-soft)}
+.mword.right .ml.hole{border-color:var(--mint);background:var(--mint-soft)}
+.ml.hole.rev{border-color:var(--sky);background:var(--sky-soft);color:var(--text)}
+.tiles{display:flex;justify-content:center;gap:10px;flex-wrap:wrap;margin-bottom:14px}
+.tile{width:56px;height:56px;border-radius:16px;border:none;background:var(--pink-soft);box-shadow:0 4px 0 var(--pink);font-family:var(--head);font-size:1.8rem}
+.tile:disabled{opacity:.25;box-shadow:none}
+
+/* 짝꿍 카드 */
+.mgrid{display:grid;grid-template-columns:repeat(5,1fr);gap:10px}
+.mcard{aspect-ratio:3/4;border-radius:18px;border:3px solid var(--border);background:linear-gradient(135deg,var(--pink-soft),var(--purple-soft));padding:6px;display:flex;align-items:center;justify-content:center;flex-direction:column;box-shadow:0 4px 0 var(--border);min-width:0}
+.mcard .mface{display:none;flex-direction:column;align-items:center;gap:2px;width:100%;min-width:0}
+.mcard .mback{font-size:2rem}
+.mcard.open,.mcard.match{background:var(--card);animation:flip .28s}
+.mcard.open .mback,.mcard.match .mback{display:none}
+.mcard.open .mface,.mcard.match .mface{display:flex}
+.mcard.match{border-color:var(--mint);background:var(--mint-soft);box-shadow:0 4px 0 var(--mint)}
+.men{font-family:var(--head);font-size:clamp(.85rem,3.4vw,1.25rem);word-break:break-word;text-align:center;line-height:1.2}
+.mko{font-size:.8rem;color:var(--muted);text-align:center;line-height:1.2;word-break:keep-all}
+.mpic{font-size:2.1rem;line-height:1.1;display:block}
+@keyframes flip{0%{transform:scaleX(.15)}100%{transform:scaleX(1)}}
+
+/* 풍선 */
+.sky-box{position:relative;height:380px;border-radius:24px;overflow:hidden;background:linear-gradient(180deg,var(--sky-soft),var(--card));border:2px solid var(--border)}
+.balloon{position:absolute;bottom:-190px;width:min(23%,118px);border:none;background:none;padding:0;animation:bal linear infinite;transform:translateX(-50%)}
+.bshape{position:relative;display:flex;align-items:center;justify-content:center;width:100%;aspect-ratio:5/6;border-radius:50% 50% 46% 46%/55% 55% 45% 45%;background:radial-gradient(circle at 30% 26%,rgba(255,255,255,.8) 0 9%,transparent 10%),var(--c);box-shadow:inset -8px -10px 0 rgba(0,0,0,.08);transition:transform .25s,opacity .25s}
+.bshape::before{content:"";position:absolute;bottom:-7px;left:50%;transform:translateX(-50%);border:7px solid transparent;border-top:9px solid var(--c);border-bottom:0}
+.bshape::after{content:"";position:absolute;bottom:-40px;left:50%;width:2px;height:34px;background:var(--muted);opacity:.6}
+.btxt{font-family:var(--head);font-size:clamp(.85rem,3.4vw,1.15rem);color:#4a3757;padding:0 4px;word-break:break-word;line-height:1.15}
+.balloon.popped .bshape{transform:scale(1.7);opacity:0}
+.balloon.deflate .bshape{transform:scale(.3);opacity:0}
+.balloon.glow .bshape{box-shadow:0 0 0 5px #fff,0 0 26px 10px var(--mint)}
+@keyframes bal{0%{transform:translate(-50%,0)}50%{transform:translate(calc(-50% + 12px),-300px)}100%{transform:translate(-50%,-600px)}}
+.boom{position:absolute;font-family:var(--head);font-size:1.7rem;color:var(--pink);transform:translate(-50%,-50%);animation:pop .4s;pointer-events:none;white-space:nowrap}
+
+/* 결과, 기록 */
+.result-stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:12px;margin-bottom:16px}
+.stat{background:var(--card);border:2px solid var(--border);border-radius:20px;padding:14px;text-align:center}
+.stat .v{font-family:var(--head);font-size:1.6rem}
+.table-wrap{overflow-x:auto}
+table{border-collapse:collapse;width:100%;min-width:520px;font-size:.95rem}
+th,td{text-align:left;padding:10px 8px;border-bottom:2px solid var(--border);vertical-align:top}
+th{font-family:var(--head);font-weight:400;font-size:1rem}
+td .badge{margin-right:4px}
+.grow-row{display:flex;align-items:center;gap:10px;margin:8px 0;flex-wrap:wrap}
+.grow-row .gname{font-family:var(--head);width:130px}
+.gbar{height:12px;background:var(--purple-soft);border-radius:999px;overflow:hidden;flex:1;min-width:80px}
+.gbar>div{height:100%;background:linear-gradient(90deg,var(--mint),var(--sky));border-radius:999px}
+
+/* 창 */
+.overlay{position:fixed;inset:0;background:rgba(60,30,80,.38);display:flex;align-items:center;justify-content:center;padding:20px;z-index:50}
+.modal{background:var(--card);border-radius:26px;padding:22px;max-width:440px;width:100%;max-height:90vh;overflow-y:auto;text-align:center;border:2px solid var(--border);animation:pop .3s}
+.modal-ava{font-size:2.6rem}
+.modal-body{font-size:1.12rem;margin:6px 0 16px}
+.modal-body .input{margin-top:4px;text-align:left}
+.modal-body label,.modal-body .label-like{text-align:left}
+.modal-btns{display:flex;gap:10px;justify-content:center;flex-wrap:wrap}
+.star-pop{position:fixed;font-size:2.4rem;pointer-events:none;z-index:60;animation:rise 1s ease-out forwards}
+@keyframes rise{0%{transform:translate(-50%,0) scale(.6);opacity:0}25%{opacity:1;transform:translate(-50%,-20px) scale(1.25)}100%{transform:translate(-50%,-120px) scale(1);opacity:0}}
+.toast{position:fixed;left:50%;bottom:calc(24px + env(safe-area-inset-bottom,0px));transform:translateX(-50%);background:var(--text);color:var(--card);padding:10px 18px;border-radius:999px;z-index:70;font-size:1rem;animation:pop .3s;max-width:90vw;text-align:center}
+#confetti{position:fixed;inset:0;pointer-events:none;z-index:40}
+
+@media (max-width:520px){
+  body{font-size:16px}
+  .grid2{grid-template-columns:1fr}
+  .logo span{font-size:2.4rem}
+  .wcard .en,.q-word{font-size:2.4rem}
+  .slot{width:38px;height:50px;font-size:1.5rem}
+  .tile{width:50px;height:50px}
+  .mgrid{grid-template-columns:repeat(4,1fr);gap:8px}
+  .sky-box{height:340px}
+}
+@media (prefers-reduced-motion:reduce){
+  *{animation:none!important;transition:none!important}
+  #deco{display:none}
+  .balloon{bottom:auto;top:110px}
+}
+</style>
+</head>
+<body>
+<div id="deco" aria-hidden="true"></div>
+<main id="app"></main>
+<canvas id="confetti"></canvas>
+
+<script>
+/* ===================== 내장 단어장 (영어|뜻|이모지 여러 개|예문|해석) ===================== */
+const DICT_RAW = `cat|고양이|🐱 🐈 😺|I have a cat.|나는 고양이가 있어요.
+dog|개|🐶 🐕 🦮|The dog runs fast.|개가 빨리 달려요.
+rabbit|토끼|🐰 🐇|The rabbit is cute.|토끼는 귀여워요.
+bird|새|🐦 🐤 🕊️|A bird can fly.|새는 날 수 있어요.
+fish|물고기|🐟 🐠 🐡|The fish can swim.|물고기는 헤엄칠 수 있어요.
+bear|곰|🐻|The bear is very big.|곰은 아주 커요.
+lion|사자|🦁|The lion is strong.|사자는 힘이 세요.
+tiger|호랑이|🐯 🐅|I saw a tiger at the zoo.|동물원에서 호랑이를 봤어요.
+elephant|코끼리|🐘|The elephant has a long nose.|코끼리는 코가 길어요.
+monkey|원숭이|🐵 🐒 🙈|The monkey eats a banana.|원숭이가 바나나를 먹어요.
+horse|말|🐴 🐎|I can ride a horse.|나는 말을 탈 수 있어요.
+pig|돼지|🐷 🐖 🐽|The pig is pink.|돼지는 분홍색이에요.
+cow|소|🐮 🐄|The cow gives us milk.|소는 우리에게 우유를 줘요.
+duck|오리|🦆|The duck swims in the pond.|오리가 연못에서 헤엄쳐요.
+frog|개구리|🐸|The frog can jump high.|개구리는 높이 뛸 수 있어요.
+mouse|쥐|🐭 🐁|The mouse is very small.|쥐는 아주 작아요.
+panda|판다|🐼|I love the panda.|나는 판다가 정말 좋아요.
+turtle|거북이|🐢|The turtle is slow.|거북이는 느려요.
+sheep|양|🐑|The sheep is white and soft.|양은 하얗고 부드러워요.
+chicken|닭|🐔 🐓|The chicken lays eggs.|닭이 달걀을 낳아요.
+giraffe|기린|🦒|The giraffe has a long neck.|기린은 목이 길어요.
+penguin|펭귄|🐧|The penguin lives on the ice.|펭귄은 얼음 위에 살아요.
+octopus|문어|🐙|The octopus has eight legs.|문어는 다리가 여덟 개예요.
+apple|사과|🍎 🍏|I eat an apple.|나는 사과를 먹어요.
+banana|바나나|🍌|This banana is yellow.|이 바나나는 노란색이에요.
+cake|케이크|🍰 🎂 🧁|I want some cake.|케이크를 좀 먹고 싶어요.
+milk|우유|🥛|I drink milk every day.|나는 매일 우유를 마셔요.
+bread|빵|🍞 🥐 🥖|I eat bread for breakfast.|아침으로 빵을 먹어요.
+egg|달걀|🥚 🍳|I eat an egg.|나는 달걀을 먹어요.
+pizza|피자|🍕|Pizza is yummy.|피자는 맛있어요.
+candy|사탕|🍬 🍭|Candy is sweet.|사탕은 달아요.
+water|물|💧 🚰|I drink water.|나는 물을 마셔요.
+juice|주스|🧃 🍹|I like orange juice.|나는 오렌지 주스를 좋아해요.
+cookie|쿠키|🍪|Grandma made a cookie.|할머니가 쿠키를 만들었어요.
+rice|밥|🍚 🍙|I eat rice.|나는 밥을 먹어요.
+strawberry|딸기|🍓|The strawberry is red.|딸기는 빨간색이에요.
+grape|포도|🍇|This grape is sweet.|이 포도는 달아요.
+carrot|당근|🥕|The rabbit eats a carrot.|토끼가 당근을 먹어요.
+watermelon|수박|🍉|I eat watermelon in summer.|여름에 수박을 먹어요.
+chocolate|초콜릿|🍫|I love chocolate.|나는 초콜릿을 정말 좋아해요.
+red|빨간색|🔴 🟥|My bag is red.|내 가방은 빨간색이에요.
+blue|파란색|🔵 🟦|The sky is blue.|하늘은 파란색이에요.
+yellow|노란색|🟡 🟨|The sun is yellow.|해는 노란색이에요.
+green|초록색|🟢 🟩|The leaf is green.|나뭇잎은 초록색이에요.
+pink|분홍색|🎀 💗|I like pink.|나는 분홍색을 좋아해요.
+purple|보라색|🟣 🟪 💜|My dress is purple.|내 드레스는 보라색이에요.
+white|흰색|⚪ 🤍|Snow is white.|눈은 흰색이에요.
+black|검은색|⚫ 🖤|My cat is black.|우리 고양이는 검은색이에요.
+orange|주황색|🟠 🟧|I have an orange crayon.|나는 주황색 크레파스가 있어요.
+mom|엄마|👩|I love my mom.|나는 엄마를 사랑해요.
+dad|아빠|👨|My dad is tall.|우리 아빠는 키가 커요.
+sister|언니, 여동생|👧|My sister is kind.|우리 언니는 친절해요.
+brother|오빠, 남동생|👦|My brother plays soccer.|우리 오빠는 축구를 해요.
+baby|아기|👶 🍼|The baby is sleeping.|아기가 자고 있어요.
+family|가족|👨‍👩‍👧 👪|I love my family.|나는 우리 가족을 사랑해요.
+grandma|할머니|👵|My grandma bakes cookies.|우리 할머니는 쿠키를 구워요.
+grandpa|할아버지|👴|My grandpa reads books.|우리 할아버지는 책을 읽어요.
+friend|친구|🤝 👭|She is my best friend.|그 애는 내 가장 친한 친구예요.
+sun|해|☀️ 🌞|The sun is hot.|해는 뜨거워요.
+rain|비|🌧️ ☔|I like the rain.|나는 비를 좋아해요.
+snow|눈|❄️ ☃️|Snow is cold.|눈은 차가워요.
+cloud|구름|☁️ 🌥️|The cloud is white.|구름은 하얘요.
+wind|바람|🌬️ 🍃|The wind is strong.|바람이 세요.
+rainbow|무지개|🌈|I see a rainbow.|무지개가 보여요.
+hot|더운|🔥 🥵|It is hot today.|오늘은 더워요.
+cold|추운|🥶 🧊|It is cold outside.|밖은 추워요.
+book|책|📚 📕|I read a book.|나는 책을 읽어요.
+pencil|연필|✏️|I need a pencil.|연필이 필요해요.
+bag|가방|🎒 👜|My bag is heavy.|내 가방은 무거워요.
+school|학교|🏫|I go to school.|나는 학교에 가요.
+teacher|선생님|🧑‍🏫|My teacher is nice.|우리 선생님은 친절해요.
+ruler|자|📏|I draw a line with a ruler.|자로 선을 그어요.
+crayon|크레파스|🖍️|I draw with a crayon.|크레파스로 그림을 그려요.
+scissors|가위|✂️|I cut paper with scissors.|가위로 종이를 잘라요.
+happy|행복한|😊 😄 😃|I am happy today.|나는 오늘 행복해요.
+sad|슬픈|😢 😭|He looks sad.|그 애는 슬퍼 보여요.
+angry|화난|😠 😡|She is angry.|그 애는 화가 났어요.
+tired|피곤한|🥱|I am tired.|나는 피곤해요.
+hungry|배고픈|😋 🤤|I am hungry.|나는 배고파요.
+scared|무서워하는|😨 😱|I am scared of the dark.|나는 어둠이 무서워요.
+excited|신나는|🤩 🥳|I am so excited!|나는 정말 신나요!
+eye|눈(신체)|👀 👁️|Close one eye.|한쪽 눈을 감아요.
+hand|손|✋ 🖐️|Raise your hand.|손을 들어요.
+foot|발|🦶|My foot is big.|내 발은 커요.
+nose|코|👃|Touch your nose.|코를 만져요.
+ear|귀|👂|I hear with my ear.|나는 귀로 들어요.
+mouth|입|👄|Open your mouth.|입을 벌려요.
+flower|꽃|🌸 🌼 🌻|This flower smells good.|이 꽃은 향기가 좋아요.
+tree|나무|🌳 🌲|The tree is tall.|나무가 키가 커요.
+star|별|⭐ 🌟|I see a star.|별이 보여요.
+moon|달|🌙 🌕|The moon is bright.|달이 밝아요.
+house|집|🏠 🏡|This is my house.|여기가 우리 집이에요.
+car|자동차|🚗 🚙|The car is red.|자동차가 빨간색이에요.
+ball|공|⚽ 🏀|Kick the ball.|공을 차요.
+doll|인형|🎎|I play with my doll.|나는 인형이랑 놀아요.
+cup|컵|☕ 🥤|The cup is full.|컵이 가득 찼어요.
+clock|시계|⏰ 🕰️|Look at the clock.|시계를 봐요.
+river|강|🏞️|The river is long.|강이 길어요.
+sea|바다|🌊 🏖️|I swim in the sea.|나는 바다에서 수영해요.
+mountain|산|⛰️ 🏔️|The mountain is high.|산이 높아요.
+heart|하트, 마음|❤️ 💖|I draw a heart.|하트를 그려요.
+crown|왕관|👑|The queen has a crown.|여왕은 왕관을 가지고 있어요.
+princess|공주|👸|She is a princess.|그녀는 공주예요.
+dress|드레스|👗|I like your dress.|네 드레스가 마음에 들어.
+run|달리다|🏃‍♀️ 🏃|I can run fast.|나는 빨리 달릴 수 있어요.
+jump|뛰다|🤸‍♀️ 🦘|Let’s jump together.|같이 뛰어요.
+swim|수영하다|🏊‍♀️ 🏊|I can swim.|나는 수영할 수 있어요.
+sing|노래하다|🎤 🎶|I like to sing.|나는 노래하는 게 좋아요.
+dance|춤추다|💃 🕺|Let’s dance!|춤춰요!
+read|읽다|📖|I read every day.|나는 매일 읽어요.
+draw|그리다|🎨 🖌️|I like to draw.|나는 그림 그리는 게 좋아요.
+sleep|자다|😴 🛌|I sleep at night.|나는 밤에 자요.
+eat|먹다|🍽️ 🥄|Let’s eat lunch.|점심 먹어요.
+play|놀다|🎈 🎲|Let’s play outside.|밖에서 놀아요.
+big|큰|🦕|The dinosaur is big.|공룡은 커요.
+small|작은|🐜|The ant is small.|개미는 작아요.
+cute|귀여운|🥰|The puppy is cute.|강아지가 귀여워요.
+pretty|예쁜|💐|The flower is pretty.|꽃이 예뻐요.
+fast|빠른|⚡ 🏎️|The rabbit is fast.|토끼는 빨라요.
+slow|느린|🐌|The snail is slow.|달팽이는 느려요.`;
+
+const DICT = DICT_RAW.trim().split('\n').map(l=>{const [en,ko,em,ex,exKo]=l.split('|');return {en,ko,emojis:em.split(' ').filter(Boolean),ex,exKo};});
+const DICT_MAP = Object.fromEntries(DICT.map(w=>[w.en,w]));
+
+const EMOJI_CATS=[
+  {name:'🐾 동물',list:['🐱','🐶','🐰','🐻','🐼','🐨','🦊','🦁','🐯','🐮','🐷','🐸','🐵','🐔','🐧','🐦','🦄','🐟','🐬','🐳','🦋','🐝','🐞','🐢','🐘','🦒']},
+  {name:'🍓 음식',list:['🍎','🍌','🍓','🍇','🍉','🍑','🍒','🥕','🌽','🍞','🧀','🥚','🍕','🍔','🍟','🍰','🧁','🍪','🍩','🍫','🍬','🍭','🍦','🥛','🧃','🍚']},
+  {name:'🌈 자연',list:['🌸','🌷','🌻','🌹','🍀','🌳','🌲','🍁','🍂','🌈','☀️','🌙','⭐','☁️','🌧️','❄️','⛄','🌊','🔥','⛰️','🌋','💧']},
+  {name:'🎒 물건',list:['📚','✏️','🖍️','✂️','📏','🎒','🏠','🏫','🚗','🚌','🚲','✈️','🚀','⏰','☕','🎁','🎈','💡','🔑','👑','👗','👟','🎀','💍']},
+  {name:'😊 사람·감정',list:['😊','😢','😠','😴','😋','😨','🤩','🥰','😂','😮','👩','👨','👧','👦','👶','👵','👴','🧑‍🏫','👸','🤝','✋','👀','👂','👃']},
+  {name:'⚽ 놀이',list:['⚽','🏀','🎾','🎨','🎤','🎵','🎹','🎸','🧸','🎮','🎲','🧩','🏊‍♀️','🏃‍♀️','🤸‍♀️','💃','🎪','🎠','🎡','🏆','🎯','🛹']}
+];
+
+const TITLES=[{n:10,t:'단어 새싹 🌱'},{n:30,t:'스펠링 요정 🧚'},{n:60,t:'단어 공주 👑'},{n:100,t:'영어 마법사 🔮'},{n:200,t:'단어 여왕 💎'}];
+
+const GAME_INFO={
+  meaning:{name:'뜻 맞히기 💭',how:'영어 단어를 보고 알맞은 뜻을 골라주세요!'},
+  scramble:{name:'철자 섞기 🔤',how:'섞인 알파벳을 순서대로 눌러서 단어를 완성해요!'},
+  blank:{name:'빈칸 채우기 ✏️',how:'문장의 빈칸에 들어갈 단어를 골라주세요!'},
+  emoji:{name:'이모지 퀴즈 😺',how:'그림을 보고 맞는 영어 단어를 골라요!'},
+  listen:{name:'듣고 고르기 🎧',how:'🔊 소리를 잘 듣고 맞는 단어를 골라요!'},
+  memory:{name:'짝꿍 카드 뒤집기 🃏',how:'카드를 두 장씩 뒤집어서 영어 단어와 그림 짝꿍을 찾아요!'},
+  balloon:{name:'풍선 터뜨리기 🎈',how:'뜻에 맞는 영어 단어 풍선을 눌러서 터뜨려요! 천천히 해도 괜찮아요.'},
+  missing:{name:'빠진 글자 채우기 🔍',how:'단어에서 빠진 글자를 찾아서 순서대로 눌러요!'}
+};
+
+const THEMES=[
+  {key:'forest',tname:'단어 보석',tr:'💎',deco:['🍃','🌿','🍄','✨','🌱'],story:'오늘은 ✨마법의 숲✨으로 모험을 떠나요! 나무 사이에 숨은 단어 보석을 찾아볼까요?'},
+  {key:'castle',tname:'단어 열쇠',tr:'🗝️',deco:['☁️','✨','🌤️','🏰'],story:'오늘은 🏰구름 위의 성🏰에 가요! 성문을 열 단어 열쇠를 모아볼까요?'},
+  {key:'sea',tname:'단어 진주',tr:'🐚',deco:['💧','🐠','🐚','🌊','✨'],story:'오늘은 🌊반짝이는 바닷속🌊으로 잠수해요! 조개 속에 숨은 단어 진주를 찾아봐요.'},
+  {key:'space',tname:'반짝 별',tr:'🌟',deco:['⭐','🌙','🪐','✨','☄️'],story:'오늘은 🚀별빛 우주🚀로 날아가요! 우주에 흩어진 반짝 별을 모아볼까요?'},
+  {key:'candy',tname:'단어 사탕',tr:'🍬',deco:['🍭','🍬','🧁','🍩','✨'],story:'오늘은 🍭달콤한 사탕 마을🍭에 놀러 가요! 단어를 맞히면 사탕을 하나씩 받아요.'}
+];
+const MOODS={hi:'🧚‍♀️',praise:'🥳',hint:'🤔',cheer:'🤗',party:'🎉'};
+const PRAISE=['정답이에요! 최고예요! 🌟','우와, 대단해요! ✨','딩동댕! 정말 잘했어요 💖','천재 탐험가 등장! 🎉','완벽해요! 루시가 깜짝 놀랐어요 😲','반짝반짝 정답이에요! 💎'];
+const CHEER=['다음 문제예요! 할 수 있어요 💪','집중! 루시가 응원해요 📣','이번 것도 맞혀볼까요? 😊','좋아요, 계속 가볼까요? 🌈'];
+const BCOLORS=['#ff9ec7','#b79cff','#8ccfff','#ffd27a','#8fe3c0'];
+
+/* ===================== 저장 ===================== */
+const KEY='lucy_word_adventure_v1';
+const memStore={};
+let quotaWarned=false;
+function defaultState(){return {childName:'',pin:'0000',stars:0,adminQueue:[],childQueue:[],wordBook:{},wrong:{},history:[],today:null,streak:0,lastStudy:null,bonus:{date:'',count:0},gstats:{}};}
+function normWord(w){
+  if(!w) return w;
+  if(!Array.isArray(w.emojis)) w.emojis=w.emoji?[w.emoji]:[];
+  const d=DICT_MAP[w.en];
+  if(d&&w.emojis.length<=1&&(!w.emojis.length||d.emojis.includes(w.emojis[0]))) w.emojis=[...d.emojis];
+  if(!w.emojis.length) w.emojis=['✨'];
+  delete w.emoji; w.img=w.img||'';
+  return w;
+}
+function loadState(){
+  let s=null;
+  try{const raw=localStorage.getItem(KEY); if(raw) s=JSON.parse(raw);}catch(e){}
+  if(!s && memStore[KEY]) s=memStore[KEY];
+  s=Object.assign(defaultState(), s||{});
+  s.adminQueue.forEach(normWord);s.childQueue.forEach(normWord);
+  if(s.today) s.today.words.forEach(normWord);
+  Object.values(s.wordBook).forEach(normWord);
+  return s;
+}
+let S=loadState();
+function save(){
+  memStore[KEY]=S;
+  try{localStorage.setItem(KEY,JSON.stringify(S));quotaWarned=false;}
+  catch(e){
+    const quota=e&&(e.name==='QuotaExceededError'||e.name==='NS_ERROR_DOM_QUOTA_REACHED'||e.code===22||e.code===1014);
+    if(quota&&!quotaWarned){quotaWarned=true;alertBox('사진이 너무 많아서 저장 공간이 부족해요 📦<br><span class="small">운영자 탭에서 안 쓰는 사진 단어를 지우면 다시 저장돼요.</span>');}
+  }
+}
+
+/* ===================== 도우미 ===================== */
+const app=document.getElementById('app');
+const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const shuffle=a=>{a=[...a];for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]];}return a;};
+const pick=a=>a[Math.floor(Math.random()*a.length)];
+const uniq=a=>[...new Set(a)];
+const uid=()=>Date.now().toString(36)+Math.random().toString(36).slice(2,7);
+function dstr(d){return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0');}
+const todayStr=()=>dstr(new Date());
+const yesterdayStr=()=>{const d=new Date();d.setDate(d.getDate()-1);return dstr(d);};
+const todayObj=()=>S.today && S.today.date===todayStr()?S.today:null;
+const nm=()=>S.childName?`${esc(S.childName)} 탐험가님`:'탐험가님';
+function titleOf(s){let t='꼬마 탐험가 🎒';TITLES.forEach(x=>{if(s>=x.n)t=x.t;});return t;}
+function nextTitle(s){return TITLES.find(x=>x.n>s)||null;}
+function prevN(s){let n=0;TITLES.forEach(x=>{if(s>=x.n)n=x.n;});return n;}
+function curStreak(){return (S.lastStudy===todayStr()||S.lastStudy===yesterdayStr())?S.streak:0;}
+function lev(a,b){
+  const m=a.length,n=b.length,d=Array.from({length:m+1},(_,i)=>[i,...Array(n).fill(0)]);
+  for(let j=1;j<=n;j++)d[0][j]=j;
+  for(let i=1;i<=m;i++)for(let j=1;j<=n;j++)d[i][j]=Math.min(d[i-1][j]+1,d[i][j-1]+1,d[i-1][j-1]+(a[i-1]===b[j-1]?0:1));
+  return d[m][n];
+}
+function suggest(en){
+  if(en.length<3) return null;
+  const maxd=en.length<=4?1:2; let best=null,bd=99;
+  DICT.forEach(w=>{const d=lev(en,w.en); if(d<=maxd && d<bd){best=w;bd=d;}});
+  return best;
+}
+function splitEmojis(s){
+  s=String(s||'').trim(); if(!s) return [];
+  let parts;
+  if(window.Intl&&Intl.Segmenter) parts=[...new Intl.Segmenter().segment(s)].map(x=>x.segment);
+  else parts=s.split(/[\s,]+/);
+  return parts.filter(g=>g.trim()&&g!==',').slice(0,3);
+}
+const reRx=s=>s.replace(/[.*+?^${}()|[\]\\]/g,'\\$&');
+function wordRx(en){return new RegExp('\\b'+reRx(en)+'\\b','i');}
+function hasEx(w){return !!(w.ex && wordRx(w.en).test(w.ex));}
+function blankOf(w){return hasEx(w)?w.ex.replace(wordRx(w.en),'_____'):'I like _____.';}
+const emo0=w=>(w.emojis&&w.emojis[0])||'✨';
+const emoR=w=>pick(w.emojis&&w.emojis.length?w.emojis:['✨']);
+const hasPicture=w=>!!w.img||(w.emojis||[]).some(e=>e!=='✨');
+function picHtml(w,cls,e){
+  if(w.img) return `<img class="pic ${cls.includes('sm')?'sm':''} ${cls.includes('mpic')?'mpic':''}" src="${w.img}" alt="${esc(w.en)} 사진">`;
+  return `<span class="${cls}" aria-hidden="true">${e||emoR(w)}</span>`;
+}
+const thumb=w=>w.img?`<img class="thumb" src="${w.img}" alt="">`:emo0(w);
+function srcLabel(src,adult){
+  if(adult) return {admin:'운영자',child:'아이',bonus:'루시 보너스'}[src];
+  return {admin:'🎁 선물 단어',child:'💖 내가 고른 단어',bonus:'✨ 루시가 고른 보너스 단어'}[src];
+}
+const badge=(src,adult)=>`<span class="badge ${src}">${srcLabel(src,adult)}</span>`;
+const theme=()=>THEMES[(S.today&&S.today.theme!=null)?S.today.theme:0];
+
+function render(html){app.innerHTML=html;window.scrollTo(0,0);}
+function lucy(text,mood='hi'){return `<div class="lucy"><div class="lucy-ava" id="lucyAva" aria-hidden="true">${MOODS[mood]||MOODS.hi}</div><div class="bubble" id="lucyBubble">${text}</div></div>`;}
+function setLucy(text,mood='hi'){
+  const b=document.getElementById('lucyBubble'),a=document.getElementById('lucyAva');if(!b)return;
+  b.innerHTML=text;b.classList.remove('pop');void b.offsetWidth;b.classList.add('pop');
+  if(a){a.textContent=MOODS[mood]||MOODS.hi;a.classList.remove('swap');void a.offsetWidth;a.classList.add('swap');}
+}
+function topBar(){
+  const tr=session&&document.body.dataset.place?`<div class="pill" id="trCount">${theme().tr} ${session.treasure}</div>`:'';
+  return `<div class="topbar"><button class="icon-btn" onclick="goHome()" aria-label="처음 화면">🏠</button><div class="spacer"></div>${tr}<div class="pill">⭐ <span id="starCount">${S.stars}</span></div><div class="pill" id="titlePill">${titleOf(S.stars)}</div></div>`;
+}
+function toast(msg){const t=document.createElement('div');t.className='toast';t.textContent=msg;document.body.appendChild(t);setTimeout(()=>t.remove(),2200);}
+function applyPlace(on){
+  const deco=document.getElementById('deco');
+  if(!on){document.body.removeAttribute('data-place');deco.innerHTML='';return;}
+  const t=theme(); if(document.body.dataset.place===t.key) return;
+  document.body.dataset.place=t.key;
+  deco.innerHTML=Array.from({length:14},()=>`<span style="left:${(Math.random()*96).toFixed(1)}%;font-size:${Math.round(16+Math.random()*24)}px;animation-duration:${(14+Math.random()*12).toFixed(1)}s;animation-delay:${(-Math.random()*22).toFixed(1)}s">${pick(t.deco)}</span>`).join('');
+}
+
+/* 창 */
+function modal({title='',body='',buttons=[{label:'확인',value:true,cls:'pink'}],ava='hi'}){
+  return new Promise(res=>{
+    const ov=document.createElement('div');ov.className='overlay';
+    ov.innerHTML=`<div class="modal" role="dialog" aria-modal="true">${ava?`<div class="modal-ava">${MOODS[ava]||ava}</div>`:''}${title?`<h3>${title}</h3>`:''}<div class="modal-body">${body}</div><div class="modal-btns">${buttons.map((b,i)=>`<button class="btn sm ${b.cls||'ghost'}" data-i="${i}">${b.label}</button>`).join('')}</div></div>`;
+    document.body.appendChild(ov);
+    ov.querySelectorAll('.modal-btns button').forEach(btn=>btn.onclick=()=>{
+      const data={};ov.querySelectorAll('[data-field]').forEach(el=>data[el.dataset.field]=el.value);
+      ov.remove();res({value:buttons[+btn.dataset.i].value,data});
+    });
+    const f=ov.querySelector('input:not([type=hidden]):not([type=file])')||ov.querySelector('.modal-btns button:last-child'); if(f) f.focus();
+  });
+}
+const alertBox=msg=>modal({body:msg});
+async function confirmBox(msg,yes='네',no='아니요'){return (await modal({body:msg,buttons:[{label:no,value:false,cls:'ghost'},{label:yes,value:true,cls:'pink'}]})).value;}
+
+/* 그림 고르기 판 */
+function picker(pid,selected){
+  return `<input type="hidden" id="${pid}" data-field="emoji" value="${esc(selected||'')}">
+  <div class="pk-tabs" role="tablist">${EMOJI_CATS.map((c,ci)=>`<button type="button" class="pk-tab ${ci===0?'on':''}" onclick="pkCat('${pid}',${ci},this)">${c.name}</button>`).join('')}</div>
+  <div class="emoji-grid" id="${pid}-grid">${pkGrid(pid,0,selected)}</div>`;
+}
+function pkGrid(pid,ci,sel){return EMOJI_CATS[ci].list.map((e,i)=>`<button type="button" class="emo ${e===sel?'on':''}" onclick="pkPick('${pid}',${ci},${i},this)" aria-label="그림 ${e}">${e}</button>`).join('');}
+function pkCat(pid,ci,btn){
+  btn.parentNode.querySelectorAll('.pk-tab').forEach(b=>b.classList.remove('on'));btn.classList.add('on');
+  document.getElementById(pid+'-grid').innerHTML=pkGrid(pid,ci,document.getElementById(pid).value);
+}
+function pkPick(pid,ci,i,btn){
+  const e=EMOJI_CATS[ci].list[i],h=document.getElementById(pid);
+  h.value=h.value===e?'':e;
+  btn.parentNode.querySelectorAll('.emo').forEach(b=>b.classList.remove('on'));
+  if(h.value) btn.classList.add('on');
+  const lab=document.getElementById(pid+'-sel');if(lab)lab.textContent=h.value;
+}
+
+/* 사진 */
+function photoField(pid,current){
+  return `<div class="photo-field">
+    <input type="hidden" id="${pid}" data-field="img" value="${esc(current||'')}">
+    <label class="btn ghost sm photo-btn">📷 사진 올리기<input type="file" accept="image/*" hidden onchange="onPhoto(this,'${pid}')"></label>
+    <div class="photo-prev" id="${pid}-prev">${current?photoPrev(pid,current):''}</div>
+  </div>`;
+}
+const photoPrev=(pid,src)=>`<img src="${src}" alt="올린 사진"><button type="button" class="x-btn" onclick="clearPhoto('${pid}')" aria-label="사진 빼기">✕</button>`;
+function readImage(file){
+  return new Promise((res,rej)=>{
+    if(!file||!/^image\//.test(file.type)) return rej(new Error('not image'));
+    const fr=new FileReader();
+    fr.onload=()=>{const im=new Image();im.onload=()=>{
+      const m=240,sc=Math.min(1,m/Math.max(im.width,im.height));
+      const c=document.createElement('canvas');c.width=Math.max(1,Math.round(im.width*sc));c.height=Math.max(1,Math.round(im.height*sc));
+      const x=c.getContext('2d');x.fillStyle='#fff';x.fillRect(0,0,c.width,c.height);x.drawImage(im,0,0,c.width,c.height);
+      res(c.toDataURL('image/jpeg',.82));
+    };im.onerror=rej;im.src=fr.result;};
+    fr.onerror=rej;fr.readAsDataURL(file);
+  });
+}
+async function onPhoto(input,pid){
+  try{
+    const url=await readImage(input.files[0]);
+    document.getElementById(pid).value=url;
+    document.getElementById(pid+'-prev').innerHTML=photoPrev(pid,url);
+  }catch(e){alertBox('사진을 불러오지 못했어요. 다른 사진으로 해볼까요? 📷');}
+  input.value='';
+}
+function clearPhoto(pid){document.getElementById(pid).value='';document.getElementById(pid+'-prev').innerHTML='';}
+
+/* 음성 */
+const canSpeak='speechSynthesis' in window && typeof SpeechSynthesisUtterance!=='undefined';
+let enVoice=null;
+function loadVoices(){
+  if(!canSpeak) return;
+  const vs=speechSynthesis.getVoices();
+  enVoice=vs.find(v=>/en[-_]US/i.test(v.lang)&&/samantha|google us|female|zira|aria|jenny/i.test(v.name))||vs.find(v=>/en[-_]US/i.test(v.lang))||vs.find(v=>/^en/i.test(v.lang))||null;
+}
+if(canSpeak){loadVoices();try{speechSynthesis.onvoiceschanged=loadVoices;}catch(e){}}
+function speak(t){
+  if(!canSpeak){toast('이 기기에서는 소리 기능을 쓸 수 없어요 🙈');return;}
+  try{speechSynthesis.cancel();const u=new SpeechSynthesisUtterance(t);u.lang='en-US';u.rate=.85;if(enVoice)u.voice=enVoice;speechSynthesis.speak(u);}catch(e){}
+}
+const speakBtn=en=>`<button class="speak" data-say="${esc(en)}" onclick="speak(this.dataset.say)" aria-label="발음 듣기">🔊</button>`;
+
+/* 별, 보물 효과 */
+function floatPop(el,sym,dx){
+  const r=el&&el.getBoundingClientRect?el.getBoundingClientRect():{left:innerWidth/2,width:0,top:innerHeight/2};
+  const s=document.createElement('div');s.className='star-pop';s.textContent=sym;
+  s.style.left=(r.left+r.width/2+(dx||0))+'px';s.style.top=Math.max(40,r.top)+'px';
+  document.body.appendChild(s);setTimeout(()=>s.remove(),1000);
+}
+function giveStar(el){
+  const before=titleOf(S.stars);S.stars++;save();floatPop(el,'⭐',-24);
+  const c=document.getElementById('starCount');if(c)c.textContent=S.stars;
+  const tp=document.getElementById('titlePill');if(tp)tp.textContent=titleOf(S.stars);
+  const after=titleOf(S.stars);
+  if(before!==after){setTimeout(()=>{confetti();modal({ava:'party',title:'새 칭호를 받았어요! 🎉',body:`<div class="title-name" style="font-size:1.8rem">${after}</div><p class="muted">별을 ${S.stars}개나 모았어요. 정말 멋져요!</p>`});},700);}
+}
+function giveTreasure(el){
+  if(!session) return;
+  session.treasure++;
+  setTimeout(()=>floatPop(el,theme().tr,24),150);
+  const t=document.getElementById('trCount');if(t)t.textContent=`${theme().tr} ${session.treasure}`;
+}
+function recordStat(type,ok){const g=S.gstats[type]||(S.gstats[type]={right:0,total:0});g.total++;if(ok)g.right++;save();}
+
+/* 색종이 */
+function confetti(){
+  if(matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+  const cv=document.getElementById('confetti'),ctx=cv.getContext('2d');
+  cv.width=innerWidth;cv.height=innerHeight;
+  const colors=['#f06fa4','#9b6ce8','#4fa9e6','#f5b93a','#38b886','#ffb3d1'];
+  const ps=Array.from({length:150},()=>({x:Math.random()*cv.width,y:-20-Math.random()*cv.height*.5,w:6+Math.random()*6,h:8+Math.random()*8,vy:2+Math.random()*3,vx:-1.5+Math.random()*3,r:Math.random()*6,vr:-.15+Math.random()*.3,c:pick(colors)}));
+  const start=performance.now();
+  (function frame(t){
+    ctx.clearRect(0,0,cv.width,cv.height);
+    ps.forEach(p=>{p.x+=p.vx;p.y+=p.vy;p.r+=p.vr;ctx.save();ctx.translate(p.x,p.y);ctx.rotate(p.r);ctx.fillStyle=p.c;ctx.fillRect(-p.w/2,-p.h/2,p.w,p.h);ctx.restore();});
+    if(t-start<3500) requestAnimationFrame(frame); else ctx.clearRect(0,0,cv.width,cv.height);
+  })(start);
+}
+
+/* ===================== 처음 화면 ===================== */
+let session=null;
+let adminUnlocked=false;
+
+function goHome(){
+  session=null;applyPlace(false);
+  const t=todayObj(), nt=nextTitle(S.stars), pn=prevN(S.stars);
+  const pct=nt?Math.round((S.stars-pn)/(nt.n-pn)*100):100;
+  const msg=t&&t.done
+    ?`오늘 모험 완료! 정말 멋져요 🎉<br>내일은 또 다른 곳으로 모험을 떠나요!`
+    :`안녕하세요, ${nm()}! 저는 요정 루시예요 🧚‍♀️<br>오늘도 영어 단어 5개를 찾으러 모험을 떠나볼까요?`;
+  const st=curStreak();
+  render(`
+    <h1 class="logo">루시와<span>영어 단어 모험</span></h1>
+    ${lucy(msg,t&&t.done?'party':'hi')}
+    <div class="card">
+      <div class="stat-row"><div class="big-star">⭐ ${S.stars}</div><div><div class="muted small">지금 내 칭호</div><div class="title-name">${titleOf(S.stars)}</div></div></div>
+      <div class="progress"><div style="width:${pct}%"></div></div>
+      <div class="muted small">${nt?`다음 칭호 ‘${nt.t}’까지 별 ${nt.n-S.stars}개 남았어요!`:'가장 높은 칭호를 받았어요! 👏'}</div>
+      ${st?`<div class="streak">🔥 ${st}일 연속 모험 중!</div>`:''}
+    </div>
+    <div class="home-btns">
+      <button class="btn xl" onclick="startAdventure()">🚀 모험 시작</button>
+      <button class="btn purple xl" onclick="goWords('child')">✏️ 단어 넣기</button>
+      <button class="btn ghost" onclick="goRecords()">📒 운영자 기록</button>
+    </div>`);
+}
+
+/* ===================== 단어 넣기 ===================== */
+function isDuplicate(en,exceptId){
+  const t=todayObj();const hit=w=>w.en===en&&w.id!==exceptId;
+  return S.adminQueue.some(hit)||S.childQueue.some(hit)||(t&&!t.done&&t.words.some(hit));
+}
+function listFor(q){
+  if(q==='admin') return S.adminQueue;
+  if(q==='child') return S.childQueue;
+  const t=todayObj(); return t&&!t.done?t.words:[];
+}
+async function checkEn(raw,kid){
+  let en=String(raw||'').trim().toLowerCase().replace(/\s+/g,' ').replace(/’/g,"'");
+  if(!en){await alertBox(kid?'영어 단어를 적어주세요 😊':'영어 단어를 넣어주세요.');return null;}
+  if(!/^[a-z][a-z '\-]*$/.test(en)){await alertBox(`‘${esc(en)}’ 안에 영어 알파벳이 아닌 글자가 있어요. 영어로만 적어주세요 🔤`);return null;}
+  return en;
+}
+async function askSpelling(en){
+  if(DICT_MAP[en]) return en;
+  const sug=suggest(en);
+  if(sug&&sug.en!==en){
+    const yes=await confirmBox(`혹시 ‘${esc(en)}’이 ‘${sug.en}’(${sug.ko}) 맞나요? ${sug.emojis[0]}`,'네, 맞아요!','아니요, 그대로 둘래요');
+    if(yes) return sug.en;
+  }
+  return en;
+}
+async function prepareWord(input,source){
+  const kid=source==='child';
+  let en=await checkEn(input.en,kid); if(!en) return null;
+  en=await askSpelling(en);
+  const d=DICT_MAP[en];
+  const ko=String(input.ko||'').trim()||(d?d.ko:'');
+  if(!ko){await alertBox(kid?`‘${esc(en)}’의 한글 뜻도 적어주세요! 📝`:`‘${esc(en)}’의 한글 뜻을 넣어주세요. 내장 단어장에 없는 단어예요.`);return null;}
+  if(isDuplicate(en)){await alertBox(`‘${esc(en)}’은(는) 이미 단어 주머니에 있어요 🎒`);return null;}
+  const ex=String(input.ex||'').trim();
+  let emojis=splitEmojis(input.emoji);
+  if(!emojis.length) emojis=d?[...d.emojis]:['✨'];
+  return {id:uid(),en,ko,emojis,img:input.img||'',ex:ex||(d?d.ex:''),exKo:ex?'':(d?d.exKo:''),source};
+}
+
+function goWords(tab){
+  session=null;applyPlace(false);
+  const tabs=`<div class="tabs" role="tablist">
+    <button class="tab ${tab==='child'?'on':''}" onclick="goWords('child')">🧒 아이</button>
+    <button class="tab ${tab==='admin'?'on':''}" onclick="goWords('admin')">🔐 운영자</button></div>`;
+  if(tab==='child') return render(topBar()+tabs+childTabHtml());
+  if(!adminUnlocked) return render(topBar()+tabs+pinGateHtml('words'));
+  render(topBar()+tabs+adminTabHtml());
+}
+
+function childTabHtml(){
+  const mine=S.childQueue;
+  return `${lucy('나만의 단어를 넣어볼까요? 영어 단어랑 뜻을 적고, 어울리는 그림을 고르거나 사진을 올려주세요 🎨')}
+  <div class="card">
+    <label for="cEn">영어 단어</label>
+    <input id="cEn" class="input big" placeholder="예: cat" autocomplete="off" autocapitalize="off" spellcheck="false">
+    <label for="cKo">한글 뜻</label>
+    <input id="cKo" class="input big" placeholder="예: 고양이" autocomplete="off">
+    <div class="label-like">그림 고르기 <span class="sel-emo" id="cEmo-sel"></span></div>
+    ${picker('cEmo','')}
+    <div class="label-like">또는 내 사진 넣기</div>
+    ${photoField('cImg','')}
+    <button class="btn xl" onclick="addChildWord()">단어 주머니에 넣기 ✨</button>
+  </div>
+  <div class="card">
+    <h3>💖 내가 넣은 단어</h3>
+    ${mine.length?`<ul class="wlist">${mine.map(w=>`<li><span class="em">${thumb(w)}</span><span class="grow"><span class="en">${esc(w.en)}</span> <span class="ko">${esc(w.ko)}</span></span><span class="li-btns"><button class="btn ghost sm" onclick="editWord('child','${w.id}','child')">✏️ 고치기</button><button class="btn ghost sm" onclick="deleteWord('child','${w.id}','child')" aria-label="${esc(w.en)} 빼기">🗑️</button></span></li>`).join('')}</ul><p class="muted small" style="margin-top:10px">잘못 넣었다면 ✏️ 고치기를 눌러요. 넣은 단어는 다음 모험에 나와요! 🎒</p>`:'<p class="muted">아직 없어요. 첫 단어를 넣어볼까요?</p>'}
+  </div>`;
+}
+async function addChildWord(){
+  const g=id=>document.getElementById(id).value;
+  const w=await prepareWord({en:g('cEn'),ko:g('cKo'),emoji:g('cEmo'),img:g('cImg')},'child');
+  if(!w) return;
+  S.childQueue.push(w);
+  const td=todayStr();
+  if(S.bonus.date!==td) S.bonus={date:td,count:0};
+  let gotStar=false;
+  if(S.bonus.count<5){S.bonus.count++;gotStar=true;}
+  save();goWords('child');
+  if(gotStar){
+    setLucy(`와, 스스로 단어를 골랐네요! ⭐ 보너스 별 1개!<br>‘${esc(w.en)}’(${esc(w.ko)}) ${w.img?'📷':emo0(w)} 은(는) 다음 모험에 나와요.<br><span class="small">잘못 넣었다면 아래에서 ✏️ 고치기를 눌러요.</span>`,'praise');
+    giveStar(document.querySelector('.btn.xl'));
+  }else{
+    setLucy(`멋진 단어예요! ‘${esc(w.en)}’을(를) 단어 주머니에 넣었어요.<br>오늘 보너스 별은 다 받았지만, 단어는 얼마든지 넣을 수 있어요 💖`,'praise');
+  }
+}
+
+function pinGateHtml(next){
+  return `<div class="card center">
+    <h3>🔒 운영자 확인</h3>
+    <p>비밀번호 4자리를 입력해주세요.</p>
+    ${S.pin==='0000'?'<p class="muted small">처음 비밀번호는 0000이에요. 설정에서 꼭 바꿔주세요.</p>':''}
+    <input id="pinIn" class="input big center" type="password" inputmode="numeric" maxlength="4" autocomplete="off" aria-label="비밀번호" style="max-width:200px;margin:8px auto 14px;display:block;letter-spacing:8px" onkeydown="if(event.key==='Enter')unlock('${next}')">
+    <button class="btn purple" onclick="unlock('${next}')">확인</button>
+  </div>`;
+}
+async function unlock(next){
+  const v=document.getElementById('pinIn').value;
+  if(v===S.pin){adminUnlocked=true;next==='records'?goRecords():goWords('admin');}
+  else{await alertBox('비밀번호가 달라요. 다시 입력해주세요.');const p=document.getElementById('pinIn');if(p){p.value='';p.focus();}}
+}
+function lockAdmin(){adminUnlocked=false;goHome();}
+
+function adminTabHtml(){
+  const t=todayObj();
+  const pouch=[...S.adminQueue.map(w=>({w,q:'admin'})),...S.childQueue.map(w=>({w,q:'child'}))];
+  return `
+  <div class="card">
+    <h3>➕ 단어 하나 넣기</h3>
+    <div class="grid2">
+      <div><label for="aEn">영어 단어</label><input id="aEn" class="input" placeholder="rabbit" autocomplete="off" autocapitalize="off" spellcheck="false"></div>
+      <div><label for="aKo">한글 뜻</label><input id="aKo" class="input" placeholder="토끼" autocomplete="off"></div>
+      <div><label for="aEm">이모지 (선택, 3개까지)</label><input id="aEm" class="input" placeholder="🐰 🐇" autocomplete="off"></div>
+      <div><label for="aEx">예문 (선택)</label><input id="aEx" class="input" placeholder="The rabbit is cute." autocomplete="off"></div>
+    </div>
+    <div class="label-like">사진 (선택)</div>
+    ${photoField('aImg','')}
+    <p class="muted small">내장 단어장(120개)에 있는 단어는 뜻·이모지·예문을 비워 두면 자동으로 채워져요. 사진을 넣으면 이모지 대신 사진이 나와요.</p>
+    <div class="row end"><button class="btn purple sm" onclick="addAdminWord()">단어 추가</button></div>
+  </div>
+  <div class="card">
+    <h3>📋 여러 단어 한 번에 넣기</h3>
+    <p class="muted small">한 줄에 하나씩, 쉼표로 나눠서 적어주세요. 영어 단어 뒤의 뜻·이모지·예문은 선택이에요.</p>
+    <textarea id="bulk" placeholder="apple, 사과, 🍎&#10;rabbit, 토끼, 🐰, The rabbit is cute.&#10;river"></textarea>
+    <div class="row end" style="margin-top:10px"><button class="btn purple sm" onclick="addBulk()">한꺼번에 추가</button></div>
+  </div>
+  <div class="card">
+    <h3>📅 오늘의 단어</h3>
+    ${t?`<ul class="wlist">${t.words.map(w=>`<li><span class="em">${thumb(w)}</span><span class="grow"><span class="en">${esc(w.en)}</span> <span class="ko">${esc(w.ko)}</span><br>${badge(w.source,true)}</span>${t.done?'':`<span class="li-btns"><button class="btn ghost sm" onclick="editWord('today','${w.id}','admin')">수정</button></span>`}</li>`).join('')}</ul>
+      <div class="row end" style="margin-top:12px">${t.done?'<span class="muted">오늘 모험 완료 ✅</span>':'<button class="btn ghost sm" onclick="rerollToday()">🔄 오늘 단어 다시 뽑기</button>'}</div>`
+      :'<p class="muted">아직 오늘 단어가 정해지지 않았어요. 아이가 모험을 시작하면 단어 주머니에서 5개가 뽑혀요.</p>'}
+  </div>
+  <div class="card">
+    <h3>🎒 단어 주머니 (${pouch.length}개)</h3>
+    <p class="muted small">운영자 단어가 먼저 나오고, 남는 자리를 아이 단어로 채워요. 5개가 안 되면 루시가 보너스 단어로 채워요.</p>
+    ${pouch.length?`<ul class="wlist">${pouch.map(({w,q})=>`<li><span class="em">${thumb(w)}</span><span class="grow"><span class="en">${esc(w.en)}</span> <span class="ko">${esc(w.ko)}</span><br>${badge(w.source,true)}</span><span class="li-btns"><button class="btn ghost sm" onclick="editWord('${q}','${w.id}','admin')">수정</button><button class="btn ghost sm" onclick="deleteWord('${q}','${w.id}','admin')">삭제</button></span></li>`).join('')}</ul>`:'<p class="muted">비어 있어요. 위에서 단어를 넣어주세요.</p>'}
+  </div>
+  <div class="card">
+    <h3>⚙️ 설정</h3>
+    <div class="grid2">
+      <div><label for="sName">아이 이름</label><input id="sName" class="input" value="${esc(S.childName)}" maxlength="10" placeholder="예: 서연"></div>
+      <div><label for="sPin">새 비밀번호 (숫자 4자리)</label><input id="sPin" class="input" type="password" inputmode="numeric" maxlength="4" placeholder="바꿀 때만 입력"></div>
+    </div>
+    <div class="row end" style="margin-top:12px"><button class="btn purple sm" onclick="saveSettings()">설정 저장</button></div>
+  </div>
+  <button class="btn ghost full" onclick="lockAdmin()">🔒 운영자 모드 잠그기</button>`;
+}
+
+async function addAdminWord(){
+  const g=id=>document.getElementById(id).value;
+  const w=await prepareWord({en:g('aEn'),ko:g('aKo'),emoji:g('aEm'),ex:g('aEx'),img:g('aImg')},'admin');
+  if(!w) return;
+  S.adminQueue.push(w);save();goWords('admin');toast(`‘${w.en}’을(를) 단어 주머니에 넣었어요`);
+}
+async function addBulk(){
+  const lines=document.getElementById('bulk').value.split('\n').map(l=>l.trim()).filter(Boolean);
+  if(!lines.length){await alertBox('넣을 단어를 한 줄에 하나씩 적어주세요.');return;}
+  let added=0;
+  for(const line of lines){
+    const p=line.split(/[,，\t]/);
+    const w=await prepareWord({en:p[0],ko:p[1],emoji:p[2],ex:p.slice(3).join(',')},'admin');
+    if(w){S.adminQueue.push(w);added++;save();}
+  }
+  goWords('admin');
+  await alertBox(`${added}개 단어를 단어 주머니에 넣었어요.${added<lines.length?`<br><span class="muted small">${lines.length-added}개는 넣지 못했어요.</span>`:''}`);
+}
+
+async function editWord(q,id,who='admin',draft=null){
+  const w=listFor(q).find(x=>x.id===id);if(!w)return;
+  const kid=who==='child';
+  const dv=f=>draft&&draft[f]!==undefined?draft[f]:null;
+  const v=(f,fallback)=>esc(dv(f)??fallback);
+  const curEmo=dv('emoji')??(kid?emo0(w):w.emojis.join(' '));
+  const curImg=dv('img')??w.img;
+  const body=kid?`
+    <label>영어 단어</label><input class="input big" data-field="en" value="${v('en',w.en)}" autocomplete="off" autocapitalize="off" spellcheck="false">
+    <label>한글 뜻</label><input class="input big" data-field="ko" value="${v('ko',w.ko)}" autocomplete="off">
+    <div class="label-like">그림 <span class="sel-emo" id="mEmo-sel">${esc(curEmo)}</span></div>
+    ${picker('mEmo',curEmo)}
+    <div class="label-like">내 사진</div>
+    ${photoField('mImg',curImg)}`
+    :`
+    <label>영어 단어</label><input class="input" data-field="en" value="${v('en',w.en)}" autocomplete="off" autocapitalize="off" spellcheck="false">
+    <label>한글 뜻</label><input class="input" data-field="ko" value="${v('ko',w.ko)}" autocomplete="off">
+    <label>이모지 (3개까지)</label><input class="input" data-field="emoji" value="${esc(curEmo)}" autocomplete="off">
+    <label>예문</label><input class="input" data-field="ex" value="${v('ex',w.ex)}" autocomplete="off">
+    <div class="label-like">사진</div>
+    ${photoField('mImg',curImg)}
+    <p class="muted small" style="text-align:left">뜻·이모지·예문을 비우면 내장 단어장에서 자동으로 채워져요.</p>`;
+  const r=await modal({ava:kid?'hi':'',title:kid?'단어 고치기 ✏️':'단어 수정',body,
+    buttons:[{label:'취소',value:false},{label:kid?'다 고쳤어요!':'저장',value:true,cls:kid?'pink':'purple'}]});
+  if(!r.value) return;
+  const before=w.en;
+  const ok=await applyEdit(w,r.data,kid);
+  if(!ok) return editWord(q,id,who,r.data);
+  save();
+  if(kid){goWords('child');setLucy(`잘 고쳤어요! ✨ ${w.img?'📷':emo0(w)} ‘${esc(w.en)}’(${esc(w.ko)})${before!==w.en?`<br><span class="small">‘${esc(before)}’ → ‘${esc(w.en)}’</span>`:''}`,'praise');}
+  else{goWords('admin');toast(`‘${w.en}’ 단어를 고쳤어요`);}
+}
+async function applyEdit(w,data,kid){
+  let en=await checkEn(data.en,kid); if(!en) return false;
+  if(en!==w.en) en=await askSpelling(en);
+  if(isDuplicate(en,w.id)){await alertBox(`‘${esc(en)}’은(는) 이미 단어 주머니에 있어요 🎒`);return false;}
+  const d=DICT_MAP[en],old=DICT_MAP[w.en],changed=en!==w.en;
+  let ko=String(data.ko||'').trim();
+  if(changed&&old&&ko===old.ko) ko='';
+  ko=ko||(d?d.ko:'');
+  if(!ko){await alertBox(kid?`‘${esc(en)}’의 한글 뜻도 적어주세요! 📝`:`‘${esc(en)}’의 한글 뜻을 넣어주세요. 내장 단어장에 없는 단어예요.`);return false;}
+  let ex=data.ex!==undefined?String(data.ex).trim():w.ex, exKo=w.exKo;
+  if(changed&&ex===w.ex&&(!old||ex===old.ex)){ex='';exKo='';}
+  else if(ex!==w.ex) exKo='';
+  if(!ex&&d){ex=d.ex;exKo=d.exKo;}
+  let es=splitEmojis(data.emoji);
+  if(changed&&old&&es.length&&es.every(e=>old.emojis.includes(e))) es=[];
+  else if(!changed&&es.length===1&&w.emojis.includes(es[0])) es=[...w.emojis];
+  if(!es.length) es=d?[...d.emojis]:['✨'];
+  Object.assign(w,{en,ko,emojis:es,img:data.img||'',ex,exKo});
+  return true;
+}
+async function deleteWord(q,id,who='admin'){
+  const list=listFor(q);const w=list.find(x=>x.id===id);if(!w)return;
+  const kid=who==='child';
+  if(!(await confirmBox(`‘${esc(w.en)}’ ${w.img?'📷':emo0(w)} 을(를) 단어 주머니에서 뺄까요?`,kid?'뺄래요':'삭제','취소')))return;
+  list.splice(list.indexOf(w),1);save();
+  if(kid){goWords('child');setLucy('단어를 뺐어요. 새 단어를 넣고 싶으면 위에 적어주세요 😊','cheer');}
+  else goWords('admin');
+}
+async function rerollToday(){
+  const t=todayObj();if(!t||t.done)return;
+  if(!(await confirmBox('오늘 단어를 다시 뽑을까요?<br><span class="muted small">운영자·아이 단어는 주머니 맨 앞으로 돌아가요.</span>','다시 뽑기','취소')))return;
+  returnToQueues(t);S.today=null;save();goWords('admin');toast('아이가 모험을 시작하면 새로 뽑혀요');
+}
+function returnToQueues(t){
+  const a=t.words.filter(w=>w.source==='admin'),c=t.words.filter(w=>w.source==='child');
+  S.adminQueue=[...a,...S.adminQueue];S.childQueue=[...c,...S.childQueue];
+}
+async function saveSettings(){
+  const name=document.getElementById('sName').value.trim().slice(0,10);
+  const pin=document.getElementById('sPin').value.trim();
+  if(pin&&!/^\d{4}$/.test(pin)){await alertBox('비밀번호는 숫자 4자리로 입력해주세요.');return;}
+  S.childName=name;if(pin)S.pin=pin;save();goWords('admin');toast('설정을 저장했어요');
+}
+
+/* ===================== 모험 ===================== */
+function buildToday(){
+  if(todayObj()){ if(S.today.theme==null){S.today.theme=Math.floor(Date.now()/864e5)%THEMES.length;save();} return; }
+  const words=[];
+  while(words.length<5&&S.adminQueue.length) words.push(S.adminQueue.shift());
+  while(words.length<5&&S.childQueue.length) words.push(S.childQueue.shift());
+  if(words.length<5){
+    const used=new Set(words.map(w=>w.en));
+    let cand=DICT.filter(d=>!S.wordBook[d.en]&&!used.has(d.en));
+    if(cand.length<5-words.length) cand=DICT.filter(d=>!used.has(d.en));
+    shuffle(cand).slice(0,5-words.length).forEach(d=>words.push({id:uid(),en:d.en,ko:d.ko,emojis:[...d.emojis],img:'',ex:d.ex,exKo:d.exKo,source:'bonus'}));
+  }
+  S.today={date:todayStr(),words,done:false,theme:Math.floor(Date.now()/864e5)%THEMES.length};save();
+}
+function pickGames(){
+  const types=Object.keys(GAME_INFO).filter(t=>t!=='listen'||canSpeak);
+  return shuffle(types).slice(0,4);
+}
+function buildReview(){
+  const todaySet=new Set(S.today.words.map(w=>w.en));
+  const list=[];
+  Object.entries(S.wrong).filter(([en,c])=>c>0&&S.wordBook[en]&&!todaySet.has(en)).sort((a,b)=>b[1]-a[1]).forEach(([en])=>list.push(en));
+  const last=[...S.history].reverse().find(h=>h.date!==todayStr());
+  if(last) shuffle(last.words.map(w=>w.en)).forEach(en=>{if(S.wordBook[en]&&!todaySet.has(en))list.push(en);});
+  return uniq(list).slice(0,3).map(en=>S.wordBook[en]);
+}
+
+async function startAdventure(){
+  buildToday();
+  const t=S.today;
+  if(t.done){
+    const ok=await confirmBox('오늘 모험은 이미 완료했어요! 🎉<br>같은 단어로 한 번 더 연습할까요?','한 번 더!','다음에 할래요');
+    if(!ok) return;
+  }
+  const games=pickGames();
+  const review=buildReview();
+  const reviewQs=review.map((w,i)=>({type:hasPicture(w)?pick(['meaning','emoji']):'meaning',word:w,phase:'review',qNo:i,total:review.length}));
+  const gameQs=[];
+  games.forEach((g,gi)=>{
+    if(g==='memory') gameQs.push({type:g,word:null,phase:'game',gameNo:gi,qNo:0,total:1});
+    else shuffle(t.words).forEach((w,qi)=>gameQs.push({type:g,word:w,phase:'game',gameNo:gi,qNo:qi,total:t.words.length}));
+  });
+  session={words:t.words,games,reviewQs,gameQs,phase:reviewQs.length?'review':'game',qi:0,earned:0,treasure:0,wrongSet:new Set(),attempts:0,locked:false,opts:[]};
+  applyPlace(true);
+  if(reviewQs.length) showReviewIntro(); else showToday();
+}
+
+function showReviewIntro(){
+  render(`${topBar()}${lucy(`모험을 떠나기 전에, 지난번 단어를 기억하는지 확인해볼까요? 🔍<br>복습 퀴즈 ${session.reviewQs.length}문제예요!`,'hint')}
+    <div class="card center"><div style="font-size:4rem">🔍</div><h2>복습 퀴즈</h2><p class="muted">기억이 안 나도 괜찮아요. 루시가 힌트를 줄게요!</p></div>
+    <button class="btn xl" onclick="session.phase='review';session.qi=0;renderQuestion()">복습 시작하기</button>`);
+}
+
+function showToday(){
+  session.phase='game';session.qi=0;
+  const t=S.today,th=theme();
+  render(`${topBar()}${lucy(`${nm()}, ${th.story}<br>단어를 맞힐 때마다 ${th.tname} ${th.tr}을(를) 하나씩 모아요!`,'party')}
+    <div class="card">
+      <h3>${th.tr} 오늘의 단어 5개</h3>
+      <ul class="wlist">${t.words.map(w=>`<li><span class="em">${thumb(w)}</span><span class="grow"><span class="en">${esc(w.en)}</span> <span class="ko">${esc(w.ko)}</span><br>${badge(w.source,false)}</span></li>`).join('')}</ul>
+    </div>
+    <p class="center muted">오늘의 게임: ${session.games.map(g=>GAME_INFO[g].name).join(', ')}</p>
+    <button class="btn xl" onclick="showCard(0)">단어 카드 보러 가기 🃏</button>`);
+}
+
+function showCard(i){
+  const t=S.today,w=t.words[i],last=i===t.words.length-1;
+  const exHtml=w.ex?`<div class="example">${hasEx(w)?esc(w.ex).replace(wordRx(esc(w.en)),m=>`<b>${m}</b>`):esc(w.ex)} ${speakBtn(w.ex)}${w.exKo?`<div class="muted small">${esc(w.exKo)}</div>`:''}</div>`:'';
+  render(`${topBar()}${lucy(i===0?'단어 카드를 한 장씩 넘겨봐요! 🔊를 누르면 발음을 들을 수 있어요.':pick(['소리 내서 따라 읽어볼까요? 🗣️','이 단어도 기억해 둬요! 💡','점점 단어 박사가 되어가요! 📚']))}
+    <div class="dots">${t.words.map((_,k)=>`<span class="${k<=i?'on':''}"></span>`).join('')}</div>
+    <div class="card wcard">
+      ${picHtml(w,'emoji',emoR(w))}
+      <div class="en">${esc(w.en)}</div>
+      <div style="margin:6px 0 4px">${speakBtn(w.en)}</div>
+      <div class="ko">${esc(w.ko)}</div>
+      ${exHtml}
+    </div>
+    <div class="row between">
+      <button class="btn ghost" onclick="showCard(${i-1})" ${i===0?'disabled':''}>⬅ 이전</button>
+      ${last?`<button class="btn" onclick="session.phase='game';session.qi=0;renderQuestion()">게임 시작! 🎮</button>`:`<button class="btn" onclick="showCard(${i+1})">다음 ➡</button>`}
+    </div>`);
+  setTimeout(()=>speak(w.en),250);
+}
+
+/* ===================== 게임 공통 ===================== */
+function curQ(){return (session.phase==='review'?session.reviewQs:session.gameQs)[session.qi];}
+
+function renderQuestion(){
+  const q=curQ();
+  session.attempts=0;session.locked=false;
+  const arr=session.phase==='review'?session.reviewQs:session.gameQs;
+  const isLast=session.qi===arr.length-1;
+  const info=GAME_INFO[q.type];
+  const head=`${topBar()}
+    <div class="game-head"><span class="tag">${q.phase==='review'?'복습 퀴즈 🔍':`게임 ${q.gameNo+1}/${session.games.length} · ${info.name}`}</span><span class="muted">${q.type==='memory'?'한 판':`문제 ${q.qNo+1}/${q.total}`}</span></div>
+    <div class="progress"><div style="width:${Math.round(session.qi/arr.length*100)}%"></div></div>`;
+  const first=q.qNo===0;
+  const intro=q.phase==='review'?(first?'지난번에 배운 단어예요. 기억나나요?':pick(CHEER)):(first?info.how:pick(CHEER));
+  const mood=q.phase==='review'&&first?'hint':'hi';
+  const nextLabel=isLast?(session.phase==='review'?'오늘의 모험 출발! 🚀':'결과 보기 🎉'):'다음 ➡';
+  const nextWrap=`<div class="next-wrap" id="nextWrap"><button class="btn xl" onclick="nextQuestion()">${nextLabel}</button></div>`;
+  const p={head,intro,mood,nextWrap};
+  if(q.type==='scramble') return renderScramble(q,p);
+  if(q.type==='memory') return renderMemory(q,p);
+  if(q.type==='balloon') return renderBalloon(q,p);
+  if(q.type==='missing') return renderMissing(q,p);
+  renderChoice(q,p);
+}
+
+function makeOpts(w,field,n){
+  const correct=w[field];
+  const others=shuffle(session.words.filter(x=>x.en!==w.en).map(x=>x[field]));
+  const dict=shuffle(DICT.map(x=>x[field]));
+  const dis=uniq([...others,...dict].filter(v=>v&&v.toLowerCase()!==correct.toLowerCase())).slice(0,n-1);
+  return shuffle([{label:correct,correct:true},...dis.map(v=>({label:v,correct:false}))]);
+}
+
+function markWrong(w){S.wrong[w.en]=(S.wrong[w.en]||0)+1;session.wrongSet.add(w.en);save();}
+function onCorrect(el){
+  const q=curQ(),w=q.word;
+  session.earned++;
+  if(q.phase==='review'&&session.attempts===0&&S.wrong[w.en]){S.wrong[w.en]--;if(S.wrong[w.en]<=0)delete S.wrong[w.en];}
+  if(q.phase==='game') recordStat(q.type,session.attempts===0);
+  giveStar(el);giveTreasure(el);
+  setLucy(pick(PRAISE)+(session.attempts?'<br>힌트를 잘 활용했어요! 👍':''),'praise');
+  speak(w.en);showNext();
+}
+function onFinalWrong(){
+  const q=curQ(),w=q.word;
+  if(q.phase==='game') recordStat(q.type,false);
+  setLucy(`정답은 <b>${esc(w.en)}</b> (${esc(w.ko)})예요.<br>괜찮아요, 다음엔 꼭 맞힐 거예요! 💪`,'cheer');
+  speak(w.en);showNext();
+}
+function hintText(q){
+  const w=q.word;
+  if(q.type==='meaning') return `앗, 아쉬워요! 힌트를 줄게요 💡<br>뜻의 첫 글자는 ‘${[...w.ko][0]}’예요.`;
+  if(q.type==='listen'){speak(w.en);return `앗, 아쉬워요! 소리를 한 번 더 들려줄게요 💡<br>첫 글자는 ‘${w.en[0]}’예요.`;}
+  return `앗, 아쉬워요! 힌트를 줄게요 💡<br>첫 글자는 ‘${w.en[0]}’예요.`;
+}
+function showNext(){const n=document.getElementById('nextWrap');if(n){n.classList.add('show');setTimeout(()=>n.scrollIntoView&&n.scrollIntoView({behavior:'smooth',block:'nearest'}),100);}}
+function nextQuestion(){
+  if(canSpeak) try{speechSynthesis.cancel();}catch(e){}
+  session.qi++;
+  const arr=session.phase==='review'?session.reviewQs:session.gameQs;
+  if(session.qi>=arr.length){ if(session.phase==='review') showToday(); else finish(); }
+  else renderQuestion();
+}
+
+/* 고르기형: 뜻 맞히기, 빈칸, 이모지, 듣기 */
+function renderChoice(q,p){
+  const w=q.word;
+  session.opts=makeOpts(w,q.type==='meaning'?'ko':'en',3);
+  let prompt='';
+  if(q.type==='meaning'){
+    prompt=`<div class="q-word">${esc(w.en)} ${speakBtn(w.en)}</div><p class="q-sub">이 단어의 뜻은 무엇일까요?</p>`;
+  }else if(q.type==='blank'){
+    const s=esc(blankOf(w)).replace('_____','<span class="blank">?</span>');
+    prompt=`${picHtml(w,'q-emoji sm',emoR(w))}<div class="q-sentence">${s}</div><p class="q-sub">${hasEx(w)&&w.exKo?esc(w.exKo):`빈칸에 ‘${esc(w.ko)}’을(를) 영어로 넣어요`}</p>`;
+  }else if(q.type==='emoji'){
+    prompt=hasPicture(w)?`${picHtml(w,'q-emoji',emoR(w))}<p class="q-sub">이 그림은 영어로 무엇일까요?</p>`:`<div class="q-word ko">${esc(w.ko)}</div><p class="q-sub">이 뜻을 영어로 하면 무엇일까요?</p>`;
+  }else if(q.type==='listen'){
+    prompt=`<button class="big-speak" data-say="${esc(w.en)}" onclick="speak(this.dataset.say)" aria-label="소리 듣기">🔊</button><p class="q-sub">소리를 잘 듣고 맞는 단어를 골라요. 여러 번 들어도 돼요!</p>`;
+  }
+  render(`${p.head}${lucy(p.intro,p.mood)}
+    <div class="card q-card">${prompt}</div>
+    <div class="opts">${session.opts.map((o,i)=>`<button class="opt" data-i="${i}" onclick="choose(${i})">${esc(o.label)}</button>`).join('')}</div>
+    ${p.nextWrap}`);
+  if(q.type==='listen') setTimeout(()=>speak(w.en),350);
+}
+function choose(i){
+  if(session.locked) return;
+  const o=session.opts[i],btn=document.querySelector(`.opt[data-i="${i}"]`),q=curQ();
+  if(o.correct){
+    session.locked=true;btn.classList.add('right');
+    document.querySelectorAll('.opt').forEach(b=>b.disabled=true);
+    onCorrect(btn);
+  }else{
+    session.attempts++;btn.classList.add('wrong');btn.disabled=true;
+    if(session.attempts===1){markWrong(q.word);setLucy(hintText(q),'hint');}
+    else{
+      session.locked=true;
+      document.querySelectorAll('.opt').forEach((b,k)=>{b.disabled=true;if(session.opts[k].correct)b.classList.add('right');});
+      onFinalWrong();
+    }
+  }
+}
+
+/* 철자 섞기 */
+function renderScramble(q,p){
+  const w=q.word,target=w.en.replace(/[^a-z]/g,'');
+  let tiles=target.split('');
+  for(let k=0;k<12;k++){tiles=shuffle(tiles);if(tiles.join('')!==target||target.length<2)break;}
+  session.sc={target,tiles,picked:[],locked:0,reveal:false};
+  render(`${p.head}${lucy(p.intro,p.mood)}
+    <div class="card q-card">
+      ${picHtml(w,'q-emoji sm',emoR(w))}
+      <div class="q-sub" style="font-size:1.25rem"><b>${esc(w.ko)}</b> — 알파벳을 순서대로 눌러요</div>
+      <div class="slots" id="slots"></div>
+      <div class="tiles" id="tiles"></div>
+      <button class="btn ghost sm" onclick="scUndo()">⬅ 하나 지우기</button>
+    </div>${p.nextWrap}`);
+  drawSc();
+}
+function drawSc(){
+  const sc=session.sc;
+  document.getElementById('slots').innerHTML=sc.target.split('').map((ch,i)=>{
+    const letter=sc.reveal?ch:(sc.picked[i]!=null?sc.tiles[sc.picked[i]]:'');
+    return `<div class="slot ${letter?'fill':''} ${i<sc.locked&&!sc.reveal?'lock':''}">${letter}</div>`;
+  }).join('');
+  document.getElementById('tiles').innerHTML=sc.tiles.map((ch,i)=>`<button class="tile" onclick="scTap(${i})" ${sc.picked.includes(i)||session.locked?'disabled':''}>${ch}</button>`).join('');
+}
+function scTap(i){const sc=session.sc;if(session.locked||sc.picked.includes(i))return;sc.picked.push(i);drawSc();if(sc.picked.length===sc.target.length)scCheck();}
+function scUndo(){const sc=session.sc;if(session.locked)return;if(sc.picked.length>sc.locked){sc.picked.pop();drawSc();}}
+function scCheck(){
+  const sc=session.sc,q=curQ(),slots=document.getElementById('slots');
+  if(sc.picked.map(i=>sc.tiles[i]).join('')===sc.target){
+    session.locked=true;drawSc();document.getElementById('slots').classList.add('right');
+    onCorrect(document.getElementById('slots'));return;
+  }
+  session.attempts++;
+  slots.classList.remove('shake');void slots.offsetWidth;slots.classList.add('shake');
+  if(session.attempts===1){
+    markWrong(q.word);
+    setLucy(`앗, 아쉬워요! 첫 글자는 ‘${sc.target[0]}’예요.<br>루시가 첫 글자를 먼저 넣어 둘게요 💡`,'hint');
+    setTimeout(()=>{sc.picked=[sc.tiles.indexOf(sc.target[0])];sc.locked=1;drawSc();},600);
+  }else{
+    session.locked=true;
+    setTimeout(()=>{sc.reveal=true;drawSc();document.getElementById('slots').classList.add('reveal');onFinalWrong();},500);
+  }
+}
+
+/* 짝꿍 카드 뒤집기 */
+function renderMemory(q,p){
+  const cards=shuffle([...session.words.map(w=>({k:w.id,t:'en',w})),...session.words.map(w=>({k:w.id,t:'pic',w,e:emoR(w)}))]);
+  session.mm={cards,open:[],done:new Set(),miss:0,busy:false};
+  render(`${p.head}${lucy(p.intro,p.mood)}
+    <div class="mgrid">${cards.map((c,i)=>`<button class="mcard" data-i="${i}" onclick="mmFlip(${i})" aria-label="카드 ${i+1}">
+      <span class="mback" aria-hidden="true">${theme().tr}</span>
+      <span class="mface">${c.t==='en'?`<span class="men">${esc(c.w.en)}</span>`:`${picHtml(c.w,'mpic',c.e)}<span class="mko">${esc(c.w.ko)}</span>`}</span>
+    </button>`).join('')}</div>${p.nextWrap}`);
+}
+function mmCard(i){return document.querySelector(`.mcard[data-i="${i}"]`);}
+function mmFlip(i){
+  const m=session.mm,c=m.cards[i];
+  if(m.busy||m.open.includes(i)||m.done.has(c.k)) return;
+  const el=mmCard(i);el.classList.add('open');m.open.push(i);
+  if(c.t==='en') speak(c.w.en);
+  if(m.open.length<2) return;
+  const [a,b]=m.open,A=m.cards[a],B=m.cards[b];
+  if(A.k===B.k){
+    m.done.add(A.k);m.open=[];
+    [a,b].forEach(j=>mmCard(j).classList.add('match'));
+    session.earned++;recordStat('memory',true);giveStar(el);giveTreasure(el);
+    if(m.done.size===session.words.length){setLucy('짝꿍을 모두 찾았어요! 기억력 대장이에요 🎉','party');showNext();}
+    else setLucy(`${pick(PRAISE)}<br>‘${esc(A.w.en)}’은(는) ${esc(A.w.ko)}!`,'praise');
+  }else{
+    m.miss++;recordStat('memory',false);m.busy=true;
+    const peek=m.miss%4===0;
+    setLucy(peek?'루시가 남은 카드를 잠깐 보여줄게요! 잘 기억해 둬요 👀':pick(['아쉬워요! 카드 자리를 기억해 둬요 🤗','괜찮아요, 다시 찾아봐요! 🤗','거의 다 왔어요! 🤗']),peek?'hint':'cheer');
+    setTimeout(()=>{
+      [a,b].forEach(j=>mmCard(j).classList.remove('open'));m.open=[];
+      if(peek){
+        const rest=[...document.querySelectorAll('.mcard')].filter(x=>!x.classList.contains('match'));
+        rest.forEach(x=>x.classList.add('open'));
+        setTimeout(()=>{rest.forEach(x=>x.classList.remove('open'));m.busy=false;},1400);
+      }else m.busy=false;
+    },900);
+  }
+}
+
+/* 풍선 터뜨리기 */
+function renderBalloon(q,p){
+  const w=q.word;
+  session.opts=makeOpts(w,'en',4);
+  const n=session.opts.length,lane=100/n,cols=shuffle(BCOLORS);
+  render(`${p.head}${lucy(p.intro,p.mood)}
+    <div class="card q-card" style="padding:16px">
+      ${picHtml(w,'q-emoji sm',emoR(w))}
+      <div class="q-word ko">${esc(w.ko)}</div>
+      <p class="q-sub" style="margin:0">이 뜻의 영어 풍선을 터뜨려요!</p>
+    </div>
+    <div class="sky-box" id="skyBox">${session.opts.map((o,i)=>`<button class="balloon" data-i="${i}" style="left:${(i*lane+lane/2).toFixed(1)}%;--c:${cols[i%cols.length]};animation-duration:${(8+Math.random()*3).toFixed(1)}s;animation-delay:${(-(i*2.2+Math.random()*1.5)).toFixed(1)}s" onclick="popBalloon(${i})"><span class="bshape"><span class="btxt">${esc(o.label)}</span></span></button>`).join('')}</div>
+    ${p.nextWrap}`);
+}
+function freeze(el){const t=getComputedStyle(el).transform;el.style.animation='none';el.style.transform=(t&&t!=='none')?t:'translateX(-50%)';}
+function boom(el,text){
+  const box=document.getElementById('skyBox');if(!box)return;
+  const r=el.getBoundingClientRect(),b=box.getBoundingClientRect();
+  const s=document.createElement('span');s.className='boom';s.textContent=text;
+  s.style.left=(r.left-b.left+r.width/2)+'px';s.style.top=(r.top-b.top+r.height/2)+'px';
+  box.appendChild(s);setTimeout(()=>s.remove(),900);
+}
+function popBalloon(i){
+  if(session.locked) return;
+  const el=document.querySelector(`.balloon[data-i="${i}"]`),o=session.opts[i],q=curQ();
+  if(o.correct){
+    session.locked=true;freeze(el);boom(el,'펑! 💥');el.classList.add('popped');
+    document.querySelectorAll('.balloon').forEach(b=>b.disabled=true);
+    onCorrect(el);
+  }else{
+    session.attempts++;freeze(el);boom(el,'피슝~');el.classList.add('deflate');el.disabled=true;
+    if(session.attempts===1){markWrong(q.word);setLucy(hintText(q),'hint');}
+    else{
+      session.locked=true;
+      document.querySelectorAll('.balloon').forEach((b,k)=>{
+        b.disabled=true;
+        if(session.opts[k].correct){freeze(b);b.classList.add('glow');}
+        else if(!b.classList.contains('deflate')){freeze(b);b.classList.add('deflate');}
+      });
+      onFinalWrong();
+    }
+  }
+}
+
+/* 빠진 글자 채우기 */
+function renderMissing(q,p){
+  const w=q.word,target=w.en.replace(/[^a-z]/g,'');
+  const k=target.length<=4?1:2;
+  const pos=shuffle([...Array(target.length).keys()]).slice(0,Math.min(k,target.length)).sort((a,b)=>a-b);
+  const miss=pos.map(i=>target[i]);
+  const extra=shuffle('abcdefghijklmnopqrstuvwxyz'.split('').filter(c=>!miss.includes(c))).slice(0,6-miss.length);
+  session.ms={target,pos,miss,tiles:shuffle([...miss,...extra]),picked:[],locked:0,reveal:false};
+  render(`${p.head}${lucy(p.intro,p.mood)}
+    <div class="card q-card">
+      ${picHtml(w,'q-emoji sm',emoR(w))}
+      <div class="q-sub" style="font-size:1.25rem"><b>${esc(w.ko)}</b> ${speakBtn(w.en)}</div>
+      <div class="mword" id="mword"></div>
+      <div class="tiles" id="mtiles"></div>
+      <button class="btn ghost sm" onclick="msUndo()">⬅ 하나 지우기</button>
+    </div>${p.nextWrap}`);
+  drawMs();
+}
+function drawMs(){
+  const m=session.ms;
+  document.getElementById('mword').innerHTML=m.target.split('').map((ch,i)=>{
+    const bi=m.pos.indexOf(i);
+    if(bi<0) return `<span class="ml">${ch}</span>`;
+    const l=m.reveal?ch:(m.picked[bi]!=null?m.tiles[m.picked[bi]]:'');
+    return `<span class="ml hole ${l?'fill':''} ${bi<m.locked&&!m.reveal?'lock':''} ${m.reveal?'rev':''}">${l||'?'}</span>`;
+  }).join('');
+  document.getElementById('mtiles').innerHTML=m.tiles.map((c,i)=>`<button class="tile" onclick="msTap(${i})" ${m.picked.includes(i)||session.locked?'disabled':''}>${c}</button>`).join('');
+}
+function msTap(i){const m=session.ms;if(session.locked||m.picked.includes(i))return;m.picked.push(i);drawMs();if(m.picked.length===m.pos.length)msCheck();}
+function msUndo(){const m=session.ms;if(session.locked)return;if(m.picked.length>m.locked){m.picked.pop();drawMs();}}
+function msCheck(){
+  const m=session.ms,q=curQ(),box=document.getElementById('mword');
+  if(m.picked.every((ti,bi)=>m.tiles[ti]===m.miss[bi])){
+    session.locked=true;drawMs();document.getElementById('mword').classList.add('right');
+    onCorrect(document.getElementById('mword'));return;
+  }
+  session.attempts++;
+  box.classList.remove('shake');void box.offsetWidth;box.classList.add('shake');
+  if(session.attempts===1){
+    markWrong(q.word);
+    if(m.miss.length>1){
+      setLucy(`앗, 아쉬워요! 첫 번째 빈칸은 ‘${m.miss[0]}’예요.<br>루시가 먼저 넣어 둘게요 💡`,'hint');
+      setTimeout(()=>{m.picked=[m.tiles.indexOf(m.miss[0])];m.locked=1;drawMs();},600);
+    }else{
+      const vowel='aeiou'.includes(m.miss[0]);
+      setLucy(`앗, 아쉬워요! 빠진 글자는 ${vowel?'모음(a, e, i, o, u) 중 하나':'모음(a, e, i, o, u)이 아닌 글자'}예요.<br>소리를 다시 잘 들어봐요 💡`,'hint');
+      speak(q.word.en);
+      setTimeout(()=>{m.picked=[];drawMs();},600);
+    }
+  }else{
+    session.locked=true;
+    setTimeout(()=>{m.reveal=true;drawMs();document.getElementById('mword').classList.add('reveal');onFinalWrong();},500);
+  }
+}
+
+/* ===================== 결과 ===================== */
+function finish(){
+  const t=S.today,td=todayStr(),th=theme();
+  t.done=true;
+  t.words.forEach(w=>{S.wordBook[w.en]={en:w.en,ko:w.ko,emojis:w.emojis,img:w.img,ex:w.ex,exKo:w.exKo};});
+  if(S.lastStudy!==td){S.streak=S.lastStudy===yesterdayStr()?S.streak+1:1;S.lastStudy=td;}
+  let h=S.history.find(x=>x.date===td);
+  if(!h){h={date:td,words:t.words.map(w=>({en:w.en,ko:w.ko,source:w.source})),wrong:[],stars:0,treasure:0,plays:0,games:[]};S.history.push(h);}
+  h.stars+=session.earned;h.treasure=(h.treasure||0)+session.treasure;h.plays++;
+  h.wrong=uniq([...h.wrong,...session.wrongSet]);h.games=uniq([...(h.games||[]),...session.games]);
+  save();
+  const pouch=[...S.adminQueue,...S.childQueue];
+  const nt=nextTitle(S.stars);
+  render(`${topBar()}${lucy(`${th.tname}을(를) ${session.treasure}개나 모았어요! ${th.tr} 정말 대단해요, ${nm()}!<br>내일 또 만나요! 👋`,'party')}
+    <div class="result-stats">
+      <div class="stat"><div class="muted small">오늘 받은 별</div><div class="v">⭐ ${session.earned}</div></div>
+      <div class="stat"><div class="muted small">오늘 모은 ${th.tname}</div><div class="v">${th.tr} ${session.treasure}</div></div>
+      <div class="stat"><div class="muted small">지금 내 칭호</div><div class="v" style="font-size:1.2rem">${titleOf(S.stars)}</div></div>
+    </div>
+    ${nt?`<p class="center muted">다음 칭호 ‘${nt.t}’까지 별 ${nt.n-S.stars}개!</p>`:''}
+    <div class="card">
+      <h3>📖 오늘 배운 단어</h3>
+      <ul class="wlist">${t.words.map(w=>`<li><span class="em">${thumb(w)}</span><span class="grow"><span class="en">${esc(w.en)}</span> <span class="ko">${esc(w.ko)}</span></span>${speakBtn(w.en)}</li>`).join('')}</ul>
+    </div>
+    <div class="card">
+      <h3>🎒 다음 모험 단어 주머니</h3>
+      ${pouch.length?`<div class="chips">${pouch.map(w=>`<span class="chip">${w.img?'📷':emo0(w)} ${esc(w.en)}</span>`).join('')}</div>`:'<p class="muted">비어 있어요. 단어를 넣어 두면 루시가 내일 모험에 꼭 넣을게요!</p>'}
+    </div>
+    <div class="home-btns">
+      <button class="btn purple xl" onclick="goWords('child')">✏️ 내일 단어 넣기</button>
+      <button class="btn ghost" onclick="goHome()">🏠 처음으로</button>
+    </div>`);
+  confetti();
+}
+
+/* ===================== 운영자 기록 ===================== */
+function goRecords(){
+  session=null;applyPlace(false);
+  if(!adminUnlocked) return render(topBar()+pinGateHtml('records'));
+  const wrongTop=Object.entries(S.wrong).filter(([,c])=>c>0).sort((a,b)=>b[1]-a[1]).slice(0,10);
+  const hist=[...S.history].reverse();
+  const gs=Object.keys(GAME_INFO).map(k=>({k,...(S.gstats[k]||{right:0,total:0})}));
+  render(`${topBar()}
+    <h2>📒 운영자 기록</h2>
+    <div class="result-stats">
+      <div class="stat"><div class="muted small">연속 학습</div><div class="v">🔥 ${curStreak()}일</div></div>
+      <div class="stat"><div class="muted small">모은 별</div><div class="v">⭐ ${S.stars}</div></div>
+      <div class="stat"><div class="muted small">배운 단어</div><div class="v">${Object.keys(S.wordBook).length}개</div></div>
+      <div class="stat"><div class="muted small">현재 칭호</div><div class="v" style="font-size:1.15rem">${titleOf(S.stars)}</div></div>
+    </div>
+    <div class="card">
+      <h3>🎮 게임별 정답률</h3>
+      <p class="muted small">힌트 없이 한 번에 맞힌 비율이에요. 짝꿍 카드는 뒤집은 횟수 중 짝을 맞힌 비율이에요.</p>
+      ${gs.map(g=>{const pct=g.total?Math.round(g.right/g.total*100):0;return `<div class="grow-row"><span class="gname">${GAME_INFO[g.k].name}</span><span class="gbar"><div style="width:${pct}%"></div></span><span class="small">${g.total?`${pct}% (${g.right}/${g.total})`:'아직 안 해봤어요'}</span></div>`;}).join('')}
+    </div>
+    <div class="card">
+      <h3>😵 자주 틀린 단어</h3>
+      ${wrongTop.length?`<ul class="wlist">${wrongTop.map(([en,c])=>{const w=S.wordBook[en]||DICT_MAP[en]||{en,ko:'',emojis:['✨']};return `<li><span class="em">${thumb(w)}</span><span class="grow"><span class="en">${esc(en)}</span> <span class="ko">${esc(w.ko)}</span></span><span class="badge child">${c}번</span></li>`;}).join('')}</ul><p class="muted small" style="margin-top:8px">다음 모험의 복습 퀴즈에 먼저 나와요. 복습에서 한 번에 맞히면 횟수가 줄어들어요.</p>`:'<p class="muted">아직 없어요. 👏</p>'}
+    </div>
+    <div class="card">
+      <h3>📅 날짜별 기록</h3>
+      ${hist.length?`<div class="table-wrap"><table><thead><tr><th>날짜</th><th>학습 단어</th><th>틀린 단어</th><th>별</th></tr></thead><tbody>
+        ${hist.map(h=>`<tr><td>${h.date}${h.plays>1?`<br><span class="muted small">${h.plays}번 플레이</span>`:''}${h.games&&h.games.length?`<br><span class="muted small">${h.games.map(g=>GAME_INFO[g]?GAME_INFO[g].name.split(' ').pop():'').join(' ')}</span>`:''}</td><td>${h.words.map(w=>`<div>${esc(w.en)} <span class="muted">${esc(w.ko)}</span> ${badge(w.source,true)}</div>`).join('')}</td><td>${h.wrong.length?h.wrong.map(esc).join(', '):'-'}</td><td>⭐ ${h.stars}</td></tr>`).join('')}
+      </tbody></table></div>`:'<p class="muted">아직 기록이 없어요. 첫 모험을 마치면 여기에 쌓여요.</p>'}
+    </div>
+    <div class="row between">
+      <button class="btn ghost sm" onclick="goWords('admin')">🎒 단어 관리로</button>
+      <button class="btn ghost sm" onclick="resetRecords()">🗑️ 기록 초기화</button>
+    </div>`);
+}
+async function resetRecords(){
+  const ok=await confirmBox('별, 칭호, 학습 기록, 틀린 단어, 게임별 정답률을 모두 지울까요?<br><span class="muted small">단어 주머니, 아이 이름, 비밀번호는 그대로 남아요. 지운 기록은 되돌릴 수 없어요.</span>','모두 지우기','취소');
+  if(!ok) return;
+  const t=todayObj(); if(t&&!t.done) returnToQueues(t);
+  Object.assign(S,{stars:0,history:[],wrong:{},wordBook:{},streak:0,lastStudy:null,today:null,bonus:{date:'',count:0},gstats:{}});
+  save();goRecords();toast('기록을 초기화했어요');
+}
+
+goHome();
+</script>
+</body>
+</html>
